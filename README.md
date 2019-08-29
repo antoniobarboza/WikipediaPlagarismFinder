@@ -1,2 +1,3 @@
 # IR_program1
-Tony Bobby solution
+Tony and Bobby's individual program 1 solution
+
