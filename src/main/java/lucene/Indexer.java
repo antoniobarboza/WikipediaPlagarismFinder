@@ -51,9 +51,8 @@ import edu.unh.cs.treccar_v2.Data.Paragraph;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
 
 /** Index all text files under a directory.
- * <p>
- * This is a command-line application demonstrating simple Lucene indexing.
- * Run it with no command-line arguments for usage information.
+ * It is currently hardcoded and does not take any input
+ * 
  */
 public class Indexer {
   
@@ -67,17 +66,17 @@ public class Indexer {
     File input = new File(docsPath);
     
     try {
-      System.out.println("Indexing to directory '" + indexPath + "'...");
+        //try to open the index to be written to
+    	Directory dir = FSDirectory.open(Paths.get(indexPath));
+    	Analyzer analyzer = new StandardAnalyzer();
+    	IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 
-      Directory dir = FSDirectory.open(Paths.get(indexPath));
-      Analyzer analyzer = new StandardAnalyzer();
-      IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+    	//Creates a new index folder, deletes any old data
+    	indexWriterConfig.setOpenMode(OpenMode.CREATE);
 
-      //Creates a new index folder, deletes any old data
-      indexWriterConfig.setOpenMode(OpenMode.CREATE);
-
-      IndexWriter indexWriter = new IndexWriter(dir, indexWriterConfig);
-      indexDocs(indexWriter, input);
+    	IndexWriter indexWriter = new IndexWriter(dir, indexWriterConfig);
+    	indexDoc(indexWriter, input);
+    	indexWriter.close();
     } catch(Exception e) {
     	e.printStackTrace();
     }
@@ -93,7 +92,7 @@ public class Indexer {
    * 
    * @throws IOException If there is a low-level I/O error
    */
-  static void indexDocs(final IndexWriter writer, File file) throws Exception {
+  static void indexDoc(final IndexWriter writer, File file) throws Exception {
 	  FileInputStream fileStream = new FileInputStream(file);
 	  //convert all data into paragraphs
 	  Iterable<Paragraph> paragraphs = null;
