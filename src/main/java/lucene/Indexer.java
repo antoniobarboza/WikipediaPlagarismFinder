@@ -61,7 +61,7 @@ public class Indexer {
   /** Index all text files under a directory. */
   public static void main(String[] args) {
     String indexPath = "../index";
-    String docsPath = "../resources/test200-train/train.pages.cbor-paragraphs.cbor";
+    String docsPath = "../../resources/test200-train/train.pages.cbor-paragraphs.cbor";
 
     File input = new File(docsPath);
     
