@@ -77,6 +77,7 @@ public class Indexer {
     	indexWriterConfig.setOpenMode(OpenMode.CREATE);
 
     	IndexWriter indexWriter = new IndexWriter(dir, indexWriterConfig);
+    
     	indexDoc(indexWriter, input);
     	indexWriter.close();
     } catch(Exception e) {
@@ -105,7 +106,7 @@ public class Indexer {
 		  //conversion failed
 		  throw e;
 	  }
-	  int i =0;
+	  int i = 0;
 	  for(Paragraph paragraph : paragraphs) {
 		  //System.out.println("PARAGRAPH #: " + i++);
 		  Document doc = new Document();
@@ -113,6 +114,8 @@ public class Indexer {
 		  doc.add(new TextField("text", paragraph.getTextOnly(), Field.Store.YES));
 		  writer.addDocument(doc);
 	  }
+	  writer.commit();
+	  //System.out.println("All documents indexed!");
   }
 
   
