@@ -60,9 +60,9 @@ public class Indexer {
 
   /** Index all text files under a directory. */
   public static void main(String[] args) {
-    String indexPath = "../index";
-    String docsPath = "./test200-train/train.pages.cbor-paragraphs.cbor";
-
+    String indexPath = "./src/main/java/index";
+    String docsPath = "./src/main/java/lucene/test200-train/train.pages.cbor-paragraphs.cbor";
+    
     File input = new File(docsPath);
     
     try {
@@ -93,6 +93,7 @@ public class Indexer {
    * @throws IOException If there is a low-level I/O error
    */
   static void indexDoc(final IndexWriter writer, File file) throws Exception {
+	  //System.out.println("PATH: " + file.getAbsolutePath());
 	  FileInputStream fileStream = new FileInputStream(file);
 	  //convert all data into paragraphs
 	  Iterable<Paragraph> paragraphs = null;
