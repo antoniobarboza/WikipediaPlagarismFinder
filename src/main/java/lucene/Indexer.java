@@ -51,7 +51,9 @@ import edu.unh.cs.treccar_v2.Data.Paragraph;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
 
 /** Index all text files under a directory.
- * It is currently hardcoded and does not take any input
+ * It is currently hard-coded and does not take any input
+ * 
+ * @author Bobby Chisholm
  * 
  */
 public class Indexer {
@@ -103,8 +105,9 @@ public class Indexer {
 		  //conversion failed
 		  throw e;
 	  }
-	  
+	  int i =0;
 	  for(Paragraph paragraph : paragraphs) {
+		  //System.out.println("PARAGRAPH #: " + i++);
 		  Document doc = new Document();
 		  doc.add(new StringField("id", paragraph.getParaId(), Field.Store.YES));
 		  doc.add(new TextField("text", paragraph.getTextOnly(), Field.Store.YES));
