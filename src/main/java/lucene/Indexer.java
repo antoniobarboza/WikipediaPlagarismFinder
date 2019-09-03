@@ -105,7 +105,7 @@ public class Indexer {
 		  //conversion failed
 		  throw e;
 	  }
-	  int i =0;
+	  //int i =0;
 	  for(Paragraph paragraph : paragraphs) {
 		  //System.out.println("PARAGRAPH #: " + i++);
 		  Document doc = new Document();

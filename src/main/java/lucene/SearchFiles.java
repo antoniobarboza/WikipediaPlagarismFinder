@@ -16,14 +16,9 @@
  */
 package lucene;
 
-
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.io.File;
 import java.nio.file.Paths;
-import java.util.Date;
+
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -46,8 +41,7 @@ public class SearchFiles {
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
     //This is a directory to the index
-    String index = "../index";
-    
+    String index = "./src/main/java/index";
     if ( args.length < 1) {
     	throw new IllegalArgumentException("Invalid number of arguments!");
     }
@@ -55,29 +49,30 @@ public class SearchFiles {
     //Code to get the argument string 
     String queryString = "";
     for (int i=0; i<args.length; i ++) {
-    	if (i > 0) {
-    		queryString = args[i] + " ";
-    	}
+    	queryString += args[i] + " ";
+
     }
-    
+    System.out.println("QueryString : " + queryString);
     IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
     IndexSearcher searcher = new IndexSearcher(reader);
-    Analyzer analyzer = new StandardAnalyzer();
-
     searcher.setSimilarity(new BM25Similarity());
     
-    QueryParser queryParser = new QueryParser("default search", analyzer);
+    Analyzer analyzer = new StandardAnalyzer();
+    QueryParser queryParser = new QueryParser("content", analyzer);
     
-    Query query = queryParser.parse(queryString);
-    TopDocs searchResult = searcher.search(query,100);
+    Query query = queryParser.parse(QueryParser.escape(queryString));
+    TopDocs searchResult = searcher.search(query,10);
     //searchResult.scoreDocs;
     ScoreDoc[] hits = searchResult.scoreDocs;
-    for (ScoreDoc doc : hits) {
-    	Document document = searcher.doc(doc.doc);
+    System.out.println("STARTING RETREVAl");
+    if (hits.length == 0) {
+        System.out.println("no hits");   	
+    }
+    for (int i=0; i < hits.length; i++ ) {
+    	Document document = searcher.doc(hits[i].doc);
     	String id = document.getField("id").toString();
     	String content = document.getField("text").toString();
     	System.out.print(id + ":" + content);
-    	
     }
   }
 }
