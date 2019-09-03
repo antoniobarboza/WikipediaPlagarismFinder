@@ -17,8 +17,9 @@
 package lucene;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
-
+import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -36,58 +37,71 @@ import org.apache.lucene.store.FSDirectory;
 
 /** Simple command-line based search demo. */
 public class SearchFiles {
-
+	
   private SearchFiles() {}
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
-    if ( args.length < 1) {
-    	//throw an illegal if not given a query
-    	throw new IllegalArgumentException("Invalid number of arguments!");
-    }
     
     //Code to get the argument string 
     String queryString = "";
     for (int i=0; i<args.length; i ++) {
         queryString += args[i] + " ";
     }
-    //queryString = "power nap benefits";
-    //queryString = "whale vocalization production of sound";
-    //queryString = "pokemon puzzle league";
+    ArrayList<String> queries = new ArrayList<String>();
+    queries.add("power nap benefits");
+    queries.add("whale vocalization production of sound");
+    queries.add("pokemon puzzle league");
     
-    System.out.println("QueryString : " + queryString);
     
-    Directory dir = FSDirectory.open(Paths.get(indexPath));
-    IndexReader reader = DirectoryReader.open(dir);
-    IndexSearcher searcher = new IndexSearcher(reader);
-    searcher.setSimilarity(new BM25Similarity());
+    if(queryString != "") queries.add(queryString);
     
-    //This sets up the query
-    Analyzer analyzer = new StandardAnalyzer();
-    QueryParser queryParser = new QueryParser("text", analyzer);
-    //Query query = queryParser.parse(QueryParser.escape(queryString));
-    Query query = queryParser.parse(queryString);
-    
-    //This initiates the search and returns top 10
-    //System.out.println("STARTING RETREVAl: " + query.toString());
-    TopDocs searchResult = searcher.search(query,10);
-    ScoreDoc[] hits = searchResult.scoreDocs;
-    
-    //System.out.println("Results found: " + searchResult.totalHits);
-    
-    //TESTIING
-    if (hits.length == 0) {
-        System.out.println("no hits...");   	
+    try {
+    	for(int i = 0;i < queries.size(); i++) {
+    		if(i != 0) System.out.print("\n\n\n");
+    		runSearch(queries.get(i), indexPath);
+    	}
+    } catch(Exception e) {
+    	System.out.println("Query failed! " + e.getMessage());
     }
     
-    for (int j=0; j < hits.length; j++ ) {
-    	Document document = searcher.doc(hits[j].doc);
-    	String id = document.getField("id").toString();
-    	String text = document.getField("text").toString();
-    	System.out.print(id + ":" + text);
-    }
+  }
+  
+  private static void runSearch(String queryString, String indexPath) throws Exception {
+	    Directory dir = FSDirectory.open(Paths.get(indexPath));
+	    IndexReader reader = DirectoryReader.open(dir);
+	    IndexSearcher searcher = new IndexSearcher(reader);
+	    searcher.setSimilarity(new BM25Similarity());
+	    
+	    //This sets up the query
+	    Analyzer analyzer = new StandardAnalyzer();
+	    QueryParser queryParser = new QueryParser("text", analyzer);
+	    //Query query = queryParser.parse(QueryParser.escape(queryString));
+	    Query query = queryParser.parse(queryString);
+	    
+	    //This initiates the search and returns top 10
+	    //System.out.println("STARTING RETREVAl: " + query.toString());
+	    TopDocs searchResult = searcher.search(query,10);
+	    ScoreDoc[] hits = searchResult.scoreDocs;
+	    
+	    //System.out.println("Results found: " + searchResult.totalHits);
+	    
+	    //If there are no results
+	    if (hits.length == 0) {
+	        System.out.println("No result found for: " + queryString);   	
+	    }
+	    else {
+	    	System.out.println("Results for query: " + queryString);
+	    }
+	    
+	    for (int j=0; j < hits.length; j++ ) {
+	    	Document document = searcher.doc(hits[j].doc);
+	    	String id = document.getField("id").toString();
+	    	String text = document.getField("text").toString();
+	    	System.out.println(j +" " + id + ":" + text);
+	    }
   }
 }
 
