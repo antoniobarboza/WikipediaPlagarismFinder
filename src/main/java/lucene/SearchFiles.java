@@ -31,6 +31,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 /** Simple command-line based search demo. */
@@ -41,38 +42,51 @@ public class SearchFiles {
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
     //This is a directory to the index
-    String index = "./src/main/java/index";
+    String indexPath = "./src/main/java/index";
     if ( args.length < 1) {
+    	//throw an illegal if not given a query
     	throw new IllegalArgumentException("Invalid number of arguments!");
     }
     
     //Code to get the argument string 
     String queryString = "";
     for (int i=0; i<args.length; i ++) {
-    	queryString += args[i] + " ";
-
+        queryString += args[i] + " ";
     }
+    //queryString = "power nap benefits";
+    //queryString = "whale vocalization production of sound";
+    //queryString = "pokemon puzzle league";
+    
     System.out.println("QueryString : " + queryString);
-    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
+    
+    Directory dir = FSDirectory.open(Paths.get(indexPath));
+    IndexReader reader = DirectoryReader.open(dir);
     IndexSearcher searcher = new IndexSearcher(reader);
     searcher.setSimilarity(new BM25Similarity());
     
+    //This sets up the query
     Analyzer analyzer = new StandardAnalyzer();
-    QueryParser queryParser = new QueryParser("content", analyzer);
+    QueryParser queryParser = new QueryParser("text", analyzer);
+    //Query query = queryParser.parse(QueryParser.escape(queryString));
+    Query query = queryParser.parse(queryString);
     
-    Query query = queryParser.parse(QueryParser.escape(queryString));
+    //This initiates the search and returns top 10
+    //System.out.println("STARTING RETREVAl: " + query.toString());
     TopDocs searchResult = searcher.search(query,10);
-    //searchResult.scoreDocs;
     ScoreDoc[] hits = searchResult.scoreDocs;
-    System.out.println("STARTING RETREVAl");
+    
+    //System.out.println("Results found: " + searchResult.totalHits);
+    
+    //TESTIING
     if (hits.length == 0) {
-        System.out.println("no hits");   	
+        System.out.println("no hits...");   	
     }
-    for (int i=0; i < hits.length; i++ ) {
-    	Document document = searcher.doc(hits[i].doc);
+    
+    for (int j=0; j < hits.length; j++ ) {
+    	Document document = searcher.doc(hits[j].doc);
     	String id = document.getField("id").toString();
-    	String content = document.getField("text").toString();
-    	System.out.print(id + ":" + content);
+    	String text = document.getField("text").toString();
+    	System.out.print(id + ":" + text);
     }
   }
 }
