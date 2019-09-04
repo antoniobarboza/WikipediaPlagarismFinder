@@ -1,0 +1,22 @@
+# IR_program1
+Tony and Bobby's individual program 1 solution
+
+*To run Maven build*
+mvn clean install
+
+*Compile
+mvn clean compile assembly:single
+
+*How to run the indexer: 
+java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.Indexer
+
+*The searcher will by default run the three queries: 
+Q1 power nap benefits
+Q2 whale vocalization production of sound
+Q3 pokemon puzzle league
+
+NOTE: If you give the SearchFiles arguments then it will run the three queries above plus the arguments as a query!
+*How to run the searcher:
+java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.SearchFiles
+
+

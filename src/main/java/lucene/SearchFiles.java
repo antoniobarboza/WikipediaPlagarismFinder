@@ -98,9 +98,9 @@ public class SearchFiles {
 	    
 	    for (int j=0; j < hits.length; j++ ) {
 	    	Document document = searcher.doc(hits[j].doc);
-	    	String id = document.getField("id").toString();
-	    	String text = document.getField("text").toString();
-	    	System.out.println(j +" " + id + ":" + text);
+	    	String id = document.get("id");
+	    	String text = document.get("text").toString();
+	    	System.out.println("Paragraph ID: " + id + ":\nContents: " + text);
 	    }
   }
 }
