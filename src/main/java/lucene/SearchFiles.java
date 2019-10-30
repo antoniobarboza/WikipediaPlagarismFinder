@@ -51,9 +51,9 @@ public class SearchFiles {
         queryString += args[i] + " ";
     }
     ArrayList<String> queries = new ArrayList<String>();
-    queries.add("power nap benefits");
-    queries.add("whale vocalization production of sound");
-    queries.add("pokemon puzzle league");
+    queries.add("Catholic views");
+    //queries.add("whale vocalization production of sound");
+    //queries.add("pokemon puzzle league");
     
     
     if(queryString != "") queries.add(queryString);
@@ -83,7 +83,7 @@ public class SearchFiles {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
-	    TopDocs searchResult = searcher.search(query,10);
+	    TopDocs searchResult = searcher.search(query,50);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
 	    //System.out.println("Results found: " + searchResult.totalHits);
@@ -100,7 +100,7 @@ public class SearchFiles {
 	    	Document document = searcher.doc(hits[j].doc);
 	    	String id = document.get("id");
 	    	String text = document.get("text").toString();
-	    	System.out.println("Paragraph ID: " + id + ":\nContents: " + text);
+	    	System.out.println("Page ID: " + id + ":\nContents: " + text);
 	    }
   }
 }

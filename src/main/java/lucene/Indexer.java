@@ -47,13 +47,14 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+import edu.unh.cs.treccar_v2.Data.Page;
 import edu.unh.cs.treccar_v2.Data.Paragraph;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
 
 /** Index all text files under a directory.
  * It is currently hard-coded and does not take any input
  * 
- * @author Bobby Chisholm
+ * @author Bobby Chisholm And Antonio Barboza 
  * 
  */
 public class Indexer {
@@ -63,7 +64,7 @@ public class Indexer {
   /** Index all text files under a directory. */
   public static void main(String[] args) {
     String indexPath = "./src/main/java/index";
-    String docsPath = "./src/main/java/lucene/test200-train/train.pages.cbor-paragraphs.cbor";
+    String docsPath = "/Users/tonybarbiza/Downloads/unprocessedAllButBenchmark.v2.1/fold-0-unprocessedAllButBenchmark.Y2.cbor";
     
     File input = new File(docsPath);
     
@@ -78,7 +79,7 @@ public class Indexer {
 
     	IndexWriter indexWriter = new IndexWriter(dir, indexWriterConfig);
     	
-    	indexDoc(indexWriter, input);
+    	indexDoc(docsPath, indexWriter, input);
     	indexWriter.close();
     } catch(Exception e) {
     	e.printStackTrace();
@@ -95,28 +96,31 @@ public class Indexer {
    * 
    * @throws IOException If there is a low-level I/O error
    */
-  static void indexDoc(final IndexWriter writer, File file) throws Exception {
-	  //System.out.println("PATH: " + file.getAbsolutePath());
-	  FileInputStream fileStream = new FileInputStream(file);
-	  //convert all data into paragraphs
-	  Iterable<Paragraph> paragraphs = null;
+  static void indexDoc(String docsPath, final IndexWriter writer, File file) throws Exception {
+	  //convert to pages
+	  File pageQueries = new File(docsPath);
+	  FileInputStream fileStream = new FileInputStream(pageQueries);
+	    
+	  Iterable<Page> pages = null;
 	  try {
-	  paragraphs = DeserializeData.iterableParagraphs(fileStream);
+		  pages= DeserializeData.iterableAnnotations(fileStream);
 	  } catch(Exception e) {
 		  //conversion failed
 		  throw e;
 	  }
 	  int commit = 0;
 	  System.out.println("Indexing documents...");
-	  for(Paragraph paragraph : paragraphs) {
-          if (commit == 50) {
+	  for(Page page : pages) {
+          if (commit == 10000) {
               writer.commit();
               commit = 0;
           }
+          //String queryId = page.getPageId().toString();
+  	  	//String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
 		  Document doc = new Document();
-		  doc.add(new StringField("id", paragraph.getParaId(), Field.Store.YES));   //Correct this needs to be a stringfield
-		  doc.add(new TextField("text", paragraph.getTextOnly(), Field.Store.YES)); //Correct this needs to be Textfield
+		  doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
+		  doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
 		  writer.addDocument(doc);
 		  commit++;
 	  }
