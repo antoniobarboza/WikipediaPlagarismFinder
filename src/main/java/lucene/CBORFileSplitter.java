@@ -38,10 +38,8 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -59,13 +57,13 @@ import edu.unh.cs.treccar_v2.read_data.DeserializeData;
  * @author Bobby Chisholm And Antonio Barboza 
  * 
  */
-public class PositionalIndexer {
+public class CBORFileSplitter {
   
-  private PositionalIndexer() {}
+  private CBORFileSplitter() {}
 
   /** Index all text files under a directory. */
   public static void main(String[] args) {
-    String indexPath = "./src/main/java/positionalIndex";
+    String indexPath = "./src/main/java/index";
     String docsPath = "./src/main/java/data/unprocessedAllButBenchmark.v2.1/fold-0-unprocessedAllButBenchmark.Y2.cbor";
     
     File input = new File(docsPath);
@@ -122,15 +120,7 @@ public class PositionalIndexer {
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
 		  Document doc = new Document();
 		  doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
-		  //doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
-		  //This is done so the positions are stored in the term vectors so it can be used in a postional search
-		  FieldType type = new FieldType();
-		  type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-		  type.setStored(true);
-		  type.setStoreTermVectors(true);
-		  doc.add(new Field("text", paragraph.getTextOnly(), type));
-		  
-		  
+		  doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
 		  writer.addDocument(doc);
 		  commit++;
 	  }
