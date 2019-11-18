@@ -64,7 +64,7 @@ public class Indexer {
   /** Index all text files under a directory. */
   public static void main(String[] args) {
     String indexPath = "./src/main/java/index";
-    String docsPath = "/Users/tonybarbiza/Downloads/unprocessedAllButBenchmark.v2.1/fold-0-unprocessedAllButBenchmark.Y2.cbor";
+    String docsPath = "./src/main/java/data/unprocessedAllButBenchmark.v2.1/fold-0-unprocessedAllButBenchmark.Y2.cbor";
     
     File input = new File(docsPath);
     
