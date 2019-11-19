@@ -18,7 +18,6 @@ public class DataManager {
 
         if (args.length<2)
             usage();
-
         String mode = args[0];
         if (mode.equals("header")) {
             final String pagesFile = args[1];
