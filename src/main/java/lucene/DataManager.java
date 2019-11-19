@@ -25,6 +25,7 @@ public class DataManager {
             System.out.println(DeserializeData.getTrecCarHeader(fileInputStream));
             System.out.println();
         }
+        
         else if (mode.equals("pages")) {
             final String pagesFile = args[1];
             final FileInputStream fileInputStream = new FileInputStream(new File(pagesFile));
