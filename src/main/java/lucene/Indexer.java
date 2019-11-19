@@ -18,6 +18,7 @@ package lucene;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -48,6 +50,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import edu.unh.cs.treccar_v2.Data.Page;
+import edu.unh.cs.treccar_v2.Data.PageMetadata;
 import edu.unh.cs.treccar_v2.Data.Paragraph;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
 
@@ -127,6 +130,5 @@ public class Indexer {
 	  writer.commit();
 	  System.out.println("All documents indexed!");
   }
-
   
 }
