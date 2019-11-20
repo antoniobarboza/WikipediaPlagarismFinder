@@ -33,6 +33,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -111,6 +112,11 @@ public class Indexer {
 		  //conversion failed
 		  throw e;
 	  }
+	  String idsPath = DataManager.getIdsPath();
+	  File f = new File(idsPath);
+	  if(!f.exists()) DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
+	  
+	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
 	  int commit = 0;
 	  System.out.println("Indexing documents...");
 	  for(Page page : pages) {
@@ -121,11 +127,13 @@ public class Indexer {
           //String queryId = page.getPageId().toString();
   	  	//String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
-		  Document doc = new Document();
-		  doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
-		  doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
-		  writer.addDocument(doc);
-		  commit++;
+          if(wantedIds.contains(page.getPageId())) {
+        	Document doc = new Document();
+		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
+		  	doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
+		  	writer.addDocument(doc);
+		  	commit++;
+          }
 	  }
 	  writer.commit();
 	  System.out.println("All documents indexed!");

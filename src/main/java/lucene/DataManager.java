@@ -13,13 +13,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.nio.file.Paths;
+
+
 public class DataManager {
 	private static String eof = "EOF";
 	private static ArrayList<String> wantedStrings = initializeList();
+	private static String idsPath = "./src/main/java/data/pageId.txt";
     private static void usage() {
         System.out.println("Command line parameters: (header|pages|outlines|paragraphs|cat) FILE");
         System.exit(-1);
@@ -41,7 +46,7 @@ public class DataManager {
         	System.out.println("Cat mode active... Starting..");
         	final String pagesFile = args[1];
         	final FileInputStream fileInputStream = new FileInputStream(new File(pagesFile));
-        	final String outFile = "./src/main/java/data/pageId.txt";
+        	final String outFile = idsPath;
         	
         	writePageIdsInCategoryToFile( wantedStrings, DeserializeData.iterableAnnotations(fileInputStream), outFile );
         	System.out.println("Cat mode active... Done..");
@@ -94,6 +99,14 @@ public class DataManager {
     	
     }
     
+    public static ArrayList<String> getDefaultCategoryList() {
+    	return wantedStrings;
+    }
+    
+    public static String getIdsPath() {
+    	return idsPath;
+    }
+    
     /**
      * This method is used to check if a single page is a part of the category we are looking for, it then writes the page's id to a file.
      * This method is only called from writePageIdInCategoryToFile
@@ -132,6 +145,10 @@ public class DataManager {
     */
    public static void writePageIdsInCategoryToFile(ArrayList<String> categoriesWanted, Iterable<Page> pages, String path) {
 	   try {
+		   	Files.deleteIfExists(Paths.get(path));
+	    	//Create the file to be written to
+	    	File defaultRankOutputFile = new File(path);
+	    	defaultRankOutputFile.createNewFile();
 		   BufferedWriter writer = new BufferedWriter(new FileWriter(path));
 	   
 		   for(Page p: pages) {
@@ -148,17 +165,17 @@ public class DataManager {
    /**
     * Tis method will return all of the pageIds that were a part of the categories we gathered from writePageIdsInCategoryToFile
     * @param filePath
-    * @return
+    * @return HashSet of page ids that we want to process, all other page ids will be skipped over
  * @throws Exception 
     */
-   public static HashSet<Page> getPageIdsFromFile(String filePath) throws Exception{
+   public static HashSet<String> getPageIdsFromFile(String filePath) throws Exception{
 	    BufferedReader reader = new BufferedReader(new FileReader(filePath));
 	    HashSet<String> ids = new HashSet<String>();
    	 	String line = reader.readLine();
    	 	line = line.replaceAll("\\s+", " ");
    	 	String[] arrayLine = line.split(" ");
    	 	while(line != null && !arrayLine[0].equals(eof)) {
-   	 	
+   	 		ids.add(arrayLine[1]);
    	 		//Get next line
    	 		line = reader.readLine();
 	    	line = line.replaceAll("\\s+", " ");
@@ -166,6 +183,7 @@ public class DataManager {
    	 	}
    	 	reader.close();
 	  
-	  return null;
+	  return ids;
    }
+   
 }
