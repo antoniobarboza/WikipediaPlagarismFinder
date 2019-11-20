@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 public class DataManager {
 	private static String eof = "EOF";
-
+	private static ArrayList<String> wantedStrings = initializeList();
     private static void usage() {
-        System.out.println("Command line parameters: (header|pages|outlines|paragraphs) FILE");
+        System.out.println("Command line parameters: (header|pages|outlines|paragraphs|cat) FILE");
         System.exit(-1);
     }
-
+    
     public static void main(String[] args) throws Exception {
         System.setProperty("file.encoding", "UTF-8");
 
@@ -36,7 +37,15 @@ public class DataManager {
             System.out.println(DeserializeData.getTrecCarHeader(fileInputStream));
             System.out.println();
         }
-        
+        else if ( mode.equals("cat")) {
+        	System.out.println("Cat mode active... Starting..");
+        	final String pagesFile = args[1];
+        	final FileInputStream fileInputStream = new FileInputStream(new File(pagesFile));
+        	final String outFile = "./src/main/java/data/pageId.txt";
+        	
+        	writePageIdsInCategoryToFile( wantedStrings, DeserializeData.iterableAnnotations(fileInputStream), outFile );
+        	System.out.println("Cat mode active... Done..");
+        }
         else if (mode.equals("pages")) {
             final String pagesFile = args[1];
             final FileInputStream fileInputStream = new FileInputStream(new File(pagesFile));
@@ -65,6 +74,25 @@ public class DataManager {
         }
 
     }
+    private static ArrayList<String> initializeList(){
+    	ArrayList<String> build = new ArrayList<String>();
+    	build.add("sport");
+    	build.add("football");
+    	build.add("soccer");
+    	build.add("baseball");
+    	build.add("cricket");
+    	build.add("basketball");
+    	build.add("golf");
+    	build.add("mlb");
+    	build.add("nfl");
+    	build.add("nhl");
+    	build.add("nba");
+    	build.add("olympics");
+    	build.add("boxing");
+    	build.add("mvp");
+    	return build;
+    	
+    }
     
     /**
      * This method is used to check if a single page is a part of the category we are looking for, it then writes the page's id to a file.
@@ -85,6 +113,7 @@ public class DataManager {
   				 try {
   					 //This will show the category that returned this pid as in a category
   					writer.write(wanted + ":  " + pid + "\n");
+  					//System.out.println(wanted + ":  " + pid );
   				} catch (IOException e) {
   					e.printStackTrace();
   				}
@@ -92,6 +121,7 @@ public class DataManager {
   			 }
   		 }
   	 }
+  	 
    }
    
    /**
@@ -100,13 +130,16 @@ public class DataManager {
     * @param pages pages to iterate through
     * @param writer the writer to the file that will store all of the page id's that we want to process
     */
-   public static void writePageIdsInCategoryToFile(ArrayList<String> categoriesWanted, Iterable<Page> pages, BufferedWriter writer) {
-	   for(Page p: pages) {
-		   writeToFileIfInCategory(categoriesWanted, p, writer);
-	   }
+   public static void writePageIdsInCategoryToFile(ArrayList<String> categoriesWanted, Iterable<Page> pages, String path) {
 	   try {
-		writer.write(eof);
-	} catch (IOException e) {
+		   BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+	   
+		   for(Page p: pages) {
+			   writeToFileIfInCategory(categoriesWanted, p, writer);
+		   }
+		   writer.write(eof);
+		   writer.close();
+	   } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
@@ -125,7 +158,7 @@ public class DataManager {
    	 	line = line.replaceAll("\\s+", " ");
    	 	String[] arrayLine = line.split(" ");
    	 	while(line != null && !arrayLine[0].equals(eof)) {
-   	 		
+   	 	
    	 		//Get next line
    	 		line = reader.readLine();
 	    	line = line.replaceAll("\\s+", " ");
