@@ -81,20 +81,21 @@ public class DataManager {
     }
     private static ArrayList<String> initializeList(){
     	ArrayList<String> build = new ArrayList<String>();
-    	build.add("sport");
-    	build.add("football");
-    	build.add("soccer");
-    	build.add("baseball");
-    	build.add("cricket");
-    	build.add("basketball");
-    	build.add("golf");
-    	build.add("mlb");
-    	build.add("nfl");
-    	build.add("nhl");
-    	build.add("nba");
-    	build.add("olympics");
-    	build.add("boxing");
-    	build.add("mvp");
+    	//build.add("sport");
+    	//build.add("football");  //78000
+    	//build.add("soccer");
+    	//build.add("baseball");  //14000
+    	build.add("cricket");   //10000
+    	//build.add("basketball");  //10000
+    	//build.add("golf");       //3000
+    	//build.add("hockey");     //13000
+    	//build.add("mlb");
+    	//build.add("nfl");
+    	//build.add("nhl");
+    	//build.add("nba");
+    	//build.add("olympics");
+    	//build.add("boxing");
+    	//build.add("mvp");
     	return build;
     	
     }
@@ -145,6 +146,7 @@ public class DataManager {
     */
    public static void writePageIdsInCategoryToFile(ArrayList<String> categoriesWanted, Iterable<Page> pages, String path) {
 	   try {
+		   	System.out.println("Begining to build the cat file...");
 		   	Files.deleteIfExists(Paths.get(path));
 	    	//Create the file to be written to
 	    	File defaultRankOutputFile = new File(path);
@@ -156,6 +158,7 @@ public class DataManager {
 		   }
 		   writer.write(eof);
 		   writer.close();
+		   System.out.println("Done building the cat file...");
 	   } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -175,11 +178,11 @@ public class DataManager {
    	 	line = line.replaceAll("\\s+", " ");
    	 	String[] arrayLine = line.split(" ");
    	 	while(line != null && !arrayLine[0].equals(eof)) {
+	    	line = line.replaceAll("\\s+", " ");
+	    	arrayLine = line.split(" ");
    	 		ids.add(arrayLine[1]);
    	 		//Get next line
    	 		line = reader.readLine();
-	    	line = line.replaceAll("\\s+", " ");
-	    	arrayLine = line.split(" ");
    	 	}
    	 	reader.close();
 	  

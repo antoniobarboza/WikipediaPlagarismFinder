@@ -68,7 +68,7 @@ public class Indexer {
   /** Index all text files under a directory. */
   public static void main(String[] args) {
     String indexPath = "./src/main/java/index";
-    String docsPath = "./src/main/java/data/unprocessedAllButBenchmark.v2.1/fold-0-unprocessedAllButBenchmark.Y2.cbor";
+    String docsPath = "/Users/tonybarbiza/Downloads/all-enwiki-20170820/all-enwiki-20170820.cbor";
     
     File input = new File(docsPath);
     
@@ -114,9 +114,11 @@ public class Indexer {
 	  }
 	  String idsPath = DataManager.getIdsPath();
 	  File f = new File(idsPath);
-	  if(!f.exists()) DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
-	  
+	  if(!f.exists()) {
+		  DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
+	  }
 	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
+	  System.out.println(wantedIds.size());
 	  int commit = 0;
 	  System.out.println("Indexing documents...");
 	  for(Page page : pages) {
