@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -99,7 +100,7 @@ public class PositionalIndexer {
    * @throws IOException If there is a low-level I/O error
    */
   static void indexDoc(String docsPath, final IndexWriter writer, File file) throws Exception {
-	  //convert to pages
+	//convert to pages
 	  File pageQueries = new File(docsPath);
 	  FileInputStream fileStream = new FileInputStream(pageQueries);
 	    
@@ -110,33 +111,44 @@ public class PositionalIndexer {
 		  //conversion failed
 		  throw e;
 	  }
+	  String idsPath = DataManager.getIdsPath();
+	  File f = new File(idsPath);
+	  if(!f.exists()) {
+		  DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
+	  }
+	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
+	  System.out.println(wantedIds.size());
 	  int commit = 0;
 	  System.out.println("Indexing documents...");
 	  for(Page page : pages) {
-          if (commit == 10000) {
+		  if( wantedIds.isEmpty() ) {
+			  break;
+		  }
+          if (commit == 20000) {
               writer.commit();
               commit = 0;
           }
           //String queryId = page.getPageId().toString();
   	  	//String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
-		  Document doc = new Document();
-		  doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
-		  //doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
-		  //This is done so the positions are stored in the term vectors so it can be used in a postional search
-		  FieldType type = new FieldType();
-		  type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-		  type.setStored(true);
-		  type.setStoreTermVectors(true);
-		  //doc.add(new Field("text", paragraph.getTextOnly(), type));
-		  
-		  
-		  writer.addDocument(doc);
-		  commit++;
+          if(wantedIds.contains(page.getPageId())) {
+        	Document doc = new Document();
+		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
+		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
+		  	//Need to create our own field type to enable the storage of the term vectors with data like postion and offset
+		  	FieldType type = new FieldType();
+		    type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+		    type.setStored(true);
+		    type.setStoreTermVectors(true);
+		  	writer.addDocument(doc);
+		  	wantedIds.remove(page.getPageId());
+		  	commit++;
+          }
 	  }
 	  writer.commit();
 	  System.out.println("All documents indexed!");
   }
 
+  
   
 }

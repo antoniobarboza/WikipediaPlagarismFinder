@@ -42,28 +42,30 @@ public class PositionalSearcher {
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
-    //This is a directory to the index
-    String indexPath = "./src/main/java/positionalIndex";
-    
-    //Code to get the argument string 
-    String queryString = "";
-    for (int i=0; i<args.length; i ++) {
-        queryString += args[i] + " ";
-    }
-    ArrayList<String> queries = new ArrayList<String>();
-    queries.add("Catholic views");
-    
-    
-    if(queryString != "") queries.add(queryString);
-    
-    try {
-    	for(int i = 0;i < queries.size(); i++) {
-    		if(i != 0) System.out.print("\n\n\n");
-    		runSearch(queries.get(i), indexPath);
-    	}
-    } catch(Exception e) {
-    	System.out.println("Query failed! " + e.getMessage());
-    }
+	//This is a directory to the index
+	    String indexPath = "./src/main/java/index";
+	    
+	    //Code to get the argument string 
+	    String queryString = "";
+	    for (int i=0; i<args.length; i ++) {
+	        queryString += args[i] + " ";
+	    }
+	    ArrayList<String> queries = new ArrayList<String>();
+	    queries.add("Catholic views");
+	    //queries.add("whale vocalization production of sound");
+	    //queries.add("pokemon puzzle league");
+	    
+	    
+	    if(queryString != "") queries.add(queryString);
+	    
+	    try {
+	    	for(int i = 0;i < queries.size(); i++) {
+	    		if(i != 0) System.out.print("\n\n\n");
+	    		runSearch(queries.get(i), indexPath);
+	    	}
+	    } catch(Exception e) {
+	    	System.out.println("Query failed! " + e.getMessage());
+	    }
     
   }
   

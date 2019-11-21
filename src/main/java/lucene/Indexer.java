@@ -125,7 +125,7 @@ public class Indexer {
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
-          if (commit == 10000) {
+          if (commit == 20000) {
               writer.commit();
               commit = 0;
           }
