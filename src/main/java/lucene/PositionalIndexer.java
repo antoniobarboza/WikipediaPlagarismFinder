@@ -128,7 +128,7 @@ public class PositionalIndexer {
 		  type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 		  type.setStored(true);
 		  type.setStoreTermVectors(true);
-		  doc.add(new Field("text", paragraph.getTextOnly(), type));
+		  //doc.add(new Field("text", paragraph.getTextOnly(), type));
 		  
 		  
 		  writer.addDocument(doc);

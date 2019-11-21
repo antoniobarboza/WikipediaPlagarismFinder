@@ -122,6 +122,9 @@ public class Indexer {
 	  int commit = 0;
 	  System.out.println("Indexing documents...");
 	  for(Page page : pages) {
+		  if( wantedIds.isEmpty() ) {
+			  break;
+		  }
           if (commit == 10000) {
               writer.commit();
               commit = 0;
@@ -134,6 +137,7 @@ public class Indexer {
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
 		  	doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); //Correct this needs to be Textfield
 		  	writer.addDocument(doc);
+		  	wantedIds.remove(page.getPageId());
 		  	commit++;
           }
 	  }
