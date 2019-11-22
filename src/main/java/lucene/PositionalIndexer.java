@@ -67,7 +67,7 @@ public class PositionalIndexer {
   /** Index all text files under a directory. */
   public static void main(String[] args) {
     String indexPath = "./src/main/java/positionalIndex";
-    String docsPath = "./src/main/java/data/unprocessedAllButBenchmark.v2.1/fold-0-unprocessedAllButBenchmark.Y2.cbor";
+    String docsPath = "./src/main/java/data/all-enwiki-20170820.cbor";
     
     File input = new File(docsPath);
     
@@ -119,7 +119,7 @@ public class PositionalIndexer {
 	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
 	  System.out.println(wantedIds.size());
 	  int commit = 0;
-	  System.out.println("Indexing documents...");
+	  System.out.println("Positionally indexing documents...");
 	  for(Page page : pages) {
 		  if( wantedIds.isEmpty() ) {
 			  break;
@@ -135,7 +135,7 @@ public class PositionalIndexer {
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
-		  	//Need to create our own field type to enable the storage of the term vectors with data like postion and offset
+		  	//Need to create our own field type to enable the storage of the term vectors with data like position and offset
 		  	FieldType type = new FieldType();
 		    type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 		    type.setStored(true);
@@ -146,7 +146,7 @@ public class PositionalIndexer {
           }
 	  }
 	  writer.commit();
-	  System.out.println("All documents indexed!");
+	  System.out.println("All documents positonally indexed!");
   }
 
   
