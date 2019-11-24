@@ -51,7 +51,7 @@ public class SearchFiles {
         queryString += args[i] + " ";
     }
     ArrayList<String> queries = new ArrayList<String>();
-    queries.add("Catholic views");
+    queries.add("cricket");
     //queries.add("whale vocalization production of sound");
     //queries.add("pokemon puzzle league");
     

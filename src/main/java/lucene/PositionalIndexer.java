@@ -52,6 +52,7 @@ import org.apache.lucene.store.FSDirectory;
 
 import edu.unh.cs.treccar_v2.Data.Page;
 import edu.unh.cs.treccar_v2.Data.Paragraph;
+import edu.unh.cs.treccar_v2.Data.Section;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
 
 /** Index all text files under a directory.
@@ -106,32 +107,45 @@ public class PositionalIndexer {
 	    
 	  Iterable<Page> pages = null;
 	  try {
-		  pages= DeserializeData.iterableAnnotations(fileStream);
+		  pages = DeserializeData.iterableAnnotations(fileStream);
 	  } catch(Exception e) {
 		  //conversion failed
 		  throw e;
 	  }
 	  String idsPath = DataManager.getIdsPath();
 	  File f = new File(idsPath);
+	  System.out.println("Getting  proper ID's...");
 	  if(!f.exists()) {
 		  DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
 	  }
 	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
-	  System.out.println(wantedIds.size());
+	  System.out.println(wantedIds.size() + " ID's retrieved");
 	  int commit = 0;
+	  //Will rpint out system time every 1,000,000 docs processed
+	  int statusCheck = 0;
+	  long startTime = System.currentTimeMillis();
+	  System.out.println("Start time: 0 milliseconds");
 	  System.out.println("Positionally indexing documents...");
 	  for(Page page : pages) {
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
-          if (commit == 20000) {
-              writer.commit();
-              commit = 0;
+		  if(statusCheck == 100000) {
+        	  System.out.println("100 thousand docs processed: " + (System.currentTimeMillis() - startTime) + " milliseconds from start");
+        	  statusCheck = 0;
           }
+          else statusCheck++;
           //String queryId = page.getPageId().toString();
   	  	//String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
-          if(wantedIds.contains(page.getPageId())) {
+		  //Returns true if it was removed false otherwise
+		  //System.out.println("PAGE ID: " + page.getPageId());
+          if(wantedIds.remove(page.getPageId())) {
+        	  //Should only commit if the doc was actually processed
+        	  if (commit == 20000) {
+                  writer.commit();
+                  commit = 0;
+              }
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
@@ -140,11 +154,14 @@ public class PositionalIndexer {
 		    type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 		    type.setStored(true);
 		    type.setStoreTermVectors(true);
+		    doc.add(new Field("text", page.getPageName().toString(), type));
+		    //System.out.println("PAGE NAME: " + page.getPageName());
+		    
 		  	writer.addDocument(doc);
-		  	wantedIds.remove(page.getPageId());
 		  	commit++;
           }
 	  }
+	  System.out.println("All docs processed: " + (System.currentTimeMillis() - startTime) + " milliseconds from start");
 	  writer.commit();
 	  System.out.println("All documents positonally indexed!");
   }
