@@ -125,9 +125,7 @@ public class DataManager {
   	} catch (IOException e) {
 		e.printStackTrace();
   	}
-  	 /**for(String pageCat: pagesCategories) {
-  		.printStackTrace();
-		}
+  	 for(String pageCat: pagesCategories) {
   		 for(String wanted: categoriesWanted) {
   			 if(pageCat.toLowerCase().contains(wanted)) {
   				 try {
@@ -141,7 +139,7 @@ public class DataManager {
   				 return;
   			 }
   		 }
-  	 }*/
+  	 }
   	 
    }
    
@@ -162,9 +160,7 @@ public class DataManager {
 		   
 		   int count = 0;
 		   for(Page p: pages) {
-			   if(count == 10000)
 			   writeToFileIfInCategory(categoriesWanted, p, writer);
-			   count++;
 		   }
 		   writer.write(eof);
 		   writer.close();
