@@ -122,19 +122,13 @@ public class PositionalIndexer {
 	  System.out.println(wantedIds.size() + " ID's retrieved");
 	  int commit = 0;
 	  //Will rpint out system time every 1,000,000 docs processed
-	  int statusCheck = 0;
 	  long startTime = System.currentTimeMillis();
-	  System.out.println("Start time: 0 milliseconds");
+	  //System.out.println("Start time: 0 milliseconds");
 	  System.out.println("Positionally indexing documents...");
 	  for(Page page : pages) {
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
-		  if(statusCheck == 100000) {
-        	  System.out.println("100 thousand docs processed: " + (System.currentTimeMillis() - startTime) + " milliseconds from start");
-        	  statusCheck = 0;
-          }
-          else statusCheck++;
           //String queryId = page.getPageId().toString();
   	  	//String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
