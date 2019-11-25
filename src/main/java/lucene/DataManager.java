@@ -120,12 +120,19 @@ public class DataManager {
   	 PageMetadata meta = p.getPageMetadata();
   	 String pid = p.getPageId();
   	 ArrayList<String> pagesCategories = meta.getCategoryNames();
-  	 
-  	 for(String pageCat: pagesCategories) {
+  	try {
+		writer.write("temp:  " + pid + "\n");
+  	} catch (IOException e) {
+		e.printStackTrace();
+  	}
+  	 /**for(String pageCat: pagesCategories) {
+  		.printStackTrace();
+		}
   		 for(String wanted: categoriesWanted) {
   			 if(pageCat.toLowerCase().contains(wanted)) {
   				 try {
   					 //This will show the category that returned this pid as in a category
+  					 // we are trying to only get the first 10000 ids becuase it takes 8 hours to index
   					writer.write(wanted + ":  " + pid + "\n");
   					//System.out.println(wanted + ":  " + pid );
   				} catch (IOException e) {
@@ -134,7 +141,7 @@ public class DataManager {
   				 return;
   			 }
   		 }
-  	 }
+  	 }*/
   	 
    }
    
@@ -152,9 +159,12 @@ public class DataManager {
 	    	File defaultRankOutputFile = new File(path);
 	    	defaultRankOutputFile.createNewFile();
 		   BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-	   
+		   
+		   int count = 0;
 		   for(Page p: pages) {
+			   if(count == 10000)
 			   writeToFileIfInCategory(categoriesWanted, p, writer);
+			   count++;
 		   }
 		   writer.write(eof);
 		   writer.close();
