@@ -51,6 +51,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import edu.unh.cs.treccar_v2.Data.Page;
+import edu.unh.cs.treccar_v2.Data.PageSkeleton;
 import edu.unh.cs.treccar_v2.Data.Paragraph;
 import edu.unh.cs.treccar_v2.Data.Section;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
@@ -129,6 +130,9 @@ public class PositionalIndexer {
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
+		  //check if instance of para then cast to para and then para.getParagraph()
+		  PageSkeleton p = page.getSkeleton().get(1);
+		  
           //String queryId = page.getPageId().toString();
   	  	//String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
