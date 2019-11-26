@@ -135,6 +135,7 @@ public class SearchFiles {
 	  return score;
   }
   
+  
   private static double calculatePlagarism(String queryString, String content ) {
 	  int totalWords = 0;
 	  double wordMatches = 0;

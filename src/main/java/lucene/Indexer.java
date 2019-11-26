@@ -142,6 +142,8 @@ public class Indexer {
           			str.append( content + " ");
           		}
           	}
+          	
+          	
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
 		  	doc.add(new TextField("text", str.toString() , Field.Store.YES)); //Correct this needs to be Textfield

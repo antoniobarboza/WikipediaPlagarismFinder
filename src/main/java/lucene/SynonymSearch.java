@@ -59,6 +59,7 @@ public class SynonymSearch {
     //queries.add("pokemon puzzle league");
     
     
+    
     if(queryString != "") queries.add(queryString);
     
     try {

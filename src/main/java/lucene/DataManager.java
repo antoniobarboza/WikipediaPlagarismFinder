@@ -189,6 +189,7 @@ public class DataManager {
    	 		ids.add(arrayLine[1]);
    	 		//Get next line
    	 		line = reader.readLine();
+   	 		
    	 	}
    	 	reader.close();
 	  
