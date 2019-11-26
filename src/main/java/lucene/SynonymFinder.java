@@ -10,7 +10,6 @@ import edu.smu.tspell.wordnet.*;
 
 public class SynonymFinder {
 	public static WordNetDatabase _database;
-	
 	public SynonymFinder() {
 		File f=new File("./src/main/java/data/WordNet-3.0/dict");
         System.setProperty("wordnet.database.dir", f.toString());
@@ -20,6 +19,8 @@ public class SynonymFinder {
         
 	}
 	public static HashSet<String> findSyn( String wordForm ) {
+		//This will return a hashset of words that are syn but will return null if there are none!
+		
 		Synset[] synsets = _database.getSynsets(wordForm);
 
         if (synsets.length > 0){
@@ -52,6 +53,7 @@ public class SynonymFinder {
         else
         {
      	   System.err.println("No synsets exist that contain the word form '" + wordForm + "'");
+     	   return null;
         }
 	}
 	public static void main(String[] args) {
