@@ -51,7 +51,7 @@ public class SearchFiles {
         queryString += args[i] + " ";
     }
     ArrayList<String> queries = new ArrayList<String>();
-    queries.add("cricket");
+    queries.add("Basketball is a non-contact sport played on a rectangular court.");
     //queries.add("whale vocalization production of sound");
     //queries.add("pokemon puzzle league");
     
@@ -83,7 +83,7 @@ public class SearchFiles {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
-	    TopDocs searchResult = searcher.search(query,50);
+	    TopDocs searchResult = searcher.search(query,3);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
 	    //System.out.println("Results found: " + searchResult.totalHits);
@@ -95,13 +95,67 @@ public class SearchFiles {
 	    else {
 	    	System.out.println("Results for query: " + queryString);
 	    }
+	    //Instead of just displaying the contents.. I need to see how much of the input String is copied.
+	    
+	    ArrayList<Double> Pscores = new ArrayList<Double>();
 	    
 	    for (int j=0; j < hits.length; j++ ) {
 	    	Document document = searcher.doc(hits[j].doc);
 	    	String id = document.get("id");
 	    	String text = document.get("text").toString();
-	    	System.out.println("Page ID: " + id + ":\nContents: " + text);
+	    	//System.out.println("Page ID: " + id + ":\nContents: " + text);
+	    	Pscores.add(calculatePlagarismNaive( queryString, text ));
+	    	//calculatePlagarism( queryString, text );
 	    }
+	    double high = 0.0;
+	    for ( Double Pscore : Pscores ) {
+	    	if ( high < Pscore ) {
+	    		high = Pscore;
+	    	}
+		    
+	    }
+	    System.out.println( "The percent plagiarized on sentince by sentince basis: " + high );
+
+  }
+  private static double calculatePlagarismNaive( String queryString, String content ) {
+	  //This function is going to look at he input string of the program and determine how much of it copied
+	  //The group words variable will be used to group the total words that are used in the contains. 
+	  
+	  int totalWords = 0;
+	  int sentinceMatches = 0;
+	  for (String word : queryString.split("\\.s+")) {
+		  //System.out.println("Sentince: " + word);
+		  totalWords++; 
+		  if ( content.contains(word)) {
+			  sentinceMatches++;
+		  }
+	  }
+	  double score = (double)sentinceMatches/(double)totalWords;
+	  //System.out.println( "Plagarism Naive percent score: " + score*100 + "%");
+	  return score;
+  }
+  
+  private static double calculatePlagarism(String queryString, String content ) {
+	  int totalWords = 0;
+	  double wordMatches = 0;
+	  boolean lastHit = false;
+	  for (String word : queryString.split("\\s+")) {
+		  totalWords++; 
+		  if ( content.contains(word)) {
+			  wordMatches += 1;
+			  if( lastHit ) {
+				  System.out.println("Consecutive");
+				  wordMatches = wordMatches * 1.01; //Give a boost for a consecutive match;
+			  }
+			  lastHit = true;
+		  }
+		  else {
+			  wordMatches = wordMatches * 0.9;
+		  }
+	  }
+	  double score = wordMatches/(double)totalWords;
+	  System.out.println( "Plagarism Weight percent score: " + score*100 + "%");
+	  return score;
   }
 }
 

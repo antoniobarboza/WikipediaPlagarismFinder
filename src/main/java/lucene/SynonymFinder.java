@@ -19,7 +19,7 @@ public class SynonymFinder {
         _database = database;
         
 	}
-	public static void findSyn( String wordForm ) {
+	public static HashSet<String> findSyn( String wordForm ) {
 		Synset[] synsets = _database.getSynsets(wordForm);
 
         if (synsets.length > 0){
@@ -37,12 +37,17 @@ public class SynonymFinder {
               }
            }
            //System.out.println(hs.size());
-           Iterator<String> it = hs.iterator();
-           String tmp;
+           //Iterator<String> it = hs.iterator();
+           
+           //String tmp;
+           
+           return hs;
+           /**
            while( it.hasNext() ) {
          	  tmp = it.next();
          	  System.out.println(tmp);
-           }              
+           }            
+           */  
         }
         else
         {
