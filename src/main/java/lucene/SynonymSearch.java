@@ -46,7 +46,7 @@ public class SynonymSearch {
     String indexPath = "./src/main/java/index";
     
     SynonymFinder synFind = new SynonymFinder();
-    synFind.findSyn("a");
+    //synFind.findSyn("a");
     
     //Code to get the argument string 
     String queryString = "";
