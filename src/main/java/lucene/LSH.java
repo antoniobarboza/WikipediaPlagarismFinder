@@ -1,20 +1,22 @@
 package lucene;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class will be the tool that we can use to use locality sensitive hashing to find similiar documents
- * For our LSH we will be doing bigram word level shingling due to the large amount of data, may change
+ * For our LSH we will be doing unigram word level shingling due to the large amount of data, may change
  * @author Bobby
  *
  */
 public class LSH {
 	
-	private static  String LSHFilePath = "./src/main/java/data/LSH.txt";
+	private static String LSHFilePath = "./src/main/java/data/LSH.txt";
 	//This value will determine how large the ngram are (how many words in a row are a gram)
-	private static int nGramValue = 2;
-	
+	private static int nGramValue = 1;
 	
 	public LSH() {
 		
@@ -49,13 +51,37 @@ public class LSH {
 	}
 	
 	/**
+	 * This method calculates the minHash of a given doc
+	 * @param d document hashset
+	 * @param hashes array of n hash functions
+	 * 
+	 * @return returns HashSet of n length of hashvalues using the provided hash functions, 
+	 * MUST be the same for every doc to get proper results
+	 */
+	public static HashSet<Integer> minHash(HashSet<String> d, MinHash [] hashes) {
+		HashSet<Integer> minHashSet = new HashSet<Integer>();
+		int numHashes = 0;
+		for(MinHash hash: hashes) {
+			//System.out.println("Num Hashes: " + numHashes);
+			if(hash == null) return minHashSet;
+			minHashSet.add(hash.getMinHash(d));
+			numHashes++;
+		}
+		
+		
+		return minHashSet;
+	}
+	
+	/**
 	 * This takes to HashSets that represent ngrams in a doc and calculates the jaccard co effecient
+	 * can also be used on 2 hash sets of integers values generated from min hash
 	 * @param d1 document 1's ngrams
 	 * @param d2 document 2's ngrams
 	 */
-	public static float calcJaccardCo(HashSet<String> d1, HashSet<String> d2) {
+	public static float calcJaccardCo(HashSet<Integer> d1, HashSet<Integer> d2) {
 		float s1 = d1.size();
 		float s2 = d2.size();
+		if(s1 == 0 || s2 == 0) return (float) 0.0;
 		float inCommon = 0;
 		//Check which length is smaller
 		if(d1.size() < d2.size()) {
@@ -64,7 +90,8 @@ public class LSH {
 		else {
 			inCommon = getNumCommonGrams(d2, d1);
 		}
-		
+		//System.out.println("Numerator  : " + inCommon);
+		//System.out.println("Denominator: " + (s1 + s2 - inCommon));
 		return inCommon/(s1 + s2 - inCommon);
 	}
 	
@@ -73,12 +100,33 @@ public class LSH {
 	 * @param smaller the doc with the smaller number of n-grams
 	 * @param longer the doc with the larger number of n-grams
 	 */
-	private static float getNumCommonGrams(HashSet<String> smaller, HashSet<String> longer) {
+	private static float getNumCommonGrams(HashSet<Integer> smaller, HashSet<Integer> longer) {
 		int inCommon = 0;
-		for(String gram : smaller) {
+		for(Integer gram : smaller) {
 			if(longer.contains(gram)) inCommon++;
 		}
+		//System.out.println("In common: " + inCommon);
 		return (float) inCommon;
+	}
+	
+	/**
+	 * Prints all doc pairs that 
+	 * @param allHashes
+	 * @param threshold
+	 */
+	public static void printDocIdsWithJaccardCoAtLeast(HashMap<String, HashSet<Integer>> allHashes, float threshold ) {
+		String [] keys = allHashes.keySet().toArray(new String[allHashes.size()]);
+		int numDocsRelated = 0;
+		for(int i = 0; i < keys.length - 1; i++) {
+			for(int j = i; j < keys.length; j++) {
+				float jac = LSH.calcJaccardCo(allHashes.get(keys[i]), allHashes.get(keys[j]));
+				if(jac >= threshold && !keys[i].equals(keys[j])) {
+					System.out.println("D1: " + keys[i] + " D2: " + keys[j] + " Jaccard Coefficient: " + jac);
+					numDocsRelated++;
+				}
+			}
+		}
+		System.out.println("Num Docs Related: " + numDocsRelated);
 	}
 	
 	private static String[] convertStringToArrayOfWords(String splitMe) {
