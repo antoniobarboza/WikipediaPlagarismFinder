@@ -47,7 +47,7 @@ public class PositionalSearcher {
   public static void main(String[] args){
 	//This is a directory to the index
 	    String indexPath = "./src/main/java/positionalIndex";
-	    String query = "cricket";
+	    String query = "Basketball is a non-contact sport played on a rectangular court.";
 	    //We are using a phraseQuery here because it checks for the terms in consecutive order within slop
 	    //PhraseQuery doc;
 	    runSearch(query, indexPath);

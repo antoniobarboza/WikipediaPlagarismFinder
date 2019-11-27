@@ -52,6 +52,7 @@ import org.apache.lucene.store.FSDirectory;
 
 import edu.unh.cs.treccar_v2.Data.Page;
 import edu.unh.cs.treccar_v2.Data.PageSkeleton;
+import edu.unh.cs.treccar_v2.Data.Para;
 import edu.unh.cs.treccar_v2.Data.Paragraph;
 import edu.unh.cs.treccar_v2.Data.Section;
 import edu.unh.cs.treccar_v2.read_data.DeserializeData;
@@ -122,7 +123,7 @@ public class PositionalIndexer {
 	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
 	  System.out.println(wantedIds.size() + " ID's retrieved");
 	  int commit = 0;
-	  //Will rpint out system time every 1,000,000 docs processed
+	  //Will print out system time every 1,000,000 docs processed
 	  long startTime = System.currentTimeMillis();
 	  //System.out.println("Start time: 0 milliseconds");
 	  System.out.println("Positionally indexing documents...");
@@ -130,29 +131,36 @@ public class PositionalIndexer {
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
-		  //check if instance of para then cast to para and then para.getParagraph()
-		  PageSkeleton p = page.getSkeleton().get(1);
 		  
           //String queryId = page.getPageId().toString();
-  	  	//String queryString = page.getPageName().toString();
+  	  	  //String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
 		  //Returns true if it was removed false otherwise
 		  //System.out.println("PAGE ID: " + page.getPageId());
           if(wantedIds.remove(page.getPageId())) {
         	  //Should only commit if the doc was actually processed
-        	  if (commit == 20000) {
+        	  //Right now we only save the first 10000 pages processed, will change it to related pages
+        	  if (commit == 10000) {
                   writer.commit();
                   commit = 0;
+                  break;
               }
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
-		  	//Need to create our own field type to enable the storage of the term vectors with data like position and offset
+		  	//This is used to get all of the contents of each page
+		  	StringBuilder build = new StringBuilder();
+		  	for(PageSkeleton p: page.getSkeleton()) {
+		  		if(p instanceof Para) {
+		  			build.append(((Para)p).getParagraph().getTextOnly());
+		  		}
+		  	}
+		  //Need to create our own field type to enable the storage of the term vectors with data like position and offset
 		  	FieldType type = new FieldType();
 		    type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 		    type.setStored(true);
 		    type.setStoreTermVectors(true);
-		    doc.add(new Field("text", page.getPageName().toString(), type));
+		    doc.add(new Field("text", build.toString(), type));
 		    //System.out.println("PAGE NAME: " + page.getPageName());
 		    
 		  	writer.addDocument(doc);
