@@ -19,7 +19,9 @@ package lucene;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -51,12 +53,17 @@ public class SearchFiles {
         queryString += args[i] + " ";
     }
     ArrayList<String> queries = new ArrayList<String>();
-    queries.add("Basketball is a non-contact sport played on a rectangular court.");
+    if ( queryString.equals("")) {
+    	queryString = "The ICC Cricket universe Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+    }
+    System.out.println("Application Starting Basic Plagarism... \n");
+    System.out.println( "Running the query: "+ queryString );
+    queries.add(queryString);
+    
     //queries.add("whale vocalization production of sound");
     //queries.add("pokemon puzzle league");
-    
-    
-    if(queryString != "") queries.add(queryString);
+   
+    //if(queryString != "") queries.add(queryString);
     
     try {
     	for(int i = 0;i < queries.size(); i++) {
@@ -93,7 +100,7 @@ public class SearchFiles {
 	        System.out.println("No result found for: " + queryString);   	
 	    }
 	    else {
-	    	System.out.println("Results for query: " + queryString);
+	    	//System.out.println("Results for query: " + queryString);
 	    }
 	    //Instead of just displaying the contents.. I need to see how much of the input String is copied.
 	    
@@ -114,23 +121,29 @@ public class SearchFiles {
 	    	}
 		    
 	    }
-	    System.out.println( "The percent plagiarized on sentince by sentince basis: " + high );
+	    System.out.println( "The percent plagiarized on sentince by sentince basis: " + high * 100 + "%" );
 
   }
   private static double calculatePlagarismNaive( String queryString, String content ) {
 	  //This function is going to look at he input string of the program and determine how much of it copied
 	  //The group words variable will be used to group the total words that are used in the contains. 
-	  
-	  int totalWords = 0;
+	  queryString = queryString.toLowerCase();
+	  content = content.toLowerCase();
+	  int totalsent = 0;
 	  int sentinceMatches = 0;
-	  for (String word : queryString.split("\\.s+")) {
-		  //System.out.println("Sentince: " + word);
-		  totalWords++; 
-		  if ( content.contains(word)) {
+	  BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+	  String source = queryString;
+	  iterator.setText(source);
+	  int start = iterator.first();
+	  for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+		  totalsent++;
+		  String sent = source.substring(start,end);
+		  //System.out.println("HERE: " + sent);
+		  if ( content.contains(sent.substring(0, sent.length()-1))) {
 			  sentinceMatches++;
 		  }
 	  }
-	  double score = (double)sentinceMatches/(double)totalWords;
+	  double score = (double)sentinceMatches/(double)totalsent;
 	  //System.out.println( "Plagarism Naive percent score: " + score*100 + "%");
 	  return score;
   }

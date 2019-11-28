@@ -118,22 +118,30 @@ public class Indexer {
 	  String idsPath = DataManager.getIdsPath();
 	  File f = new File(idsPath);
 	  if(!f.exists()) {
-		  //DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
+		  DataManager.writePageIdsInCategoryToFile(DataManager.getDefaultCategoryList(), pages, idsPath);
 	  }
-	  //HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
+	  HashSet<String> wantedIds = DataManager.getPageIdsFromFile(idsPath);
 	  //System.out.println(wantedIds.size());
 	  int commit = 0;
+	  int counter = 0;
 	  System.out.println("Indexing documents...");
 	  for(Page page : pages) {
+		  counter++;
           if (commit == 10000) {
               writer.commit();
               commit = 0;
-              break;
+              //break;
+          }
+          if ( counter %1000 == 0) { 
+        	  System.out.println("The counter is: " + counter);
+          }
+          if ( counter == 10000 ) {
+        	  break;
           }
           //String queryId = page.getPageId().toString();
-  	  	//String queryString = page.getPageName().toString();
+  	  	  //String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
-          //if(wantedIds.contains(page.getPageId())) {
+          if(wantedIds.contains(page.getPageId())) {
           StringBuilder str = new StringBuilder();
           
           	for ( PageSkeleton skel : page.getSkeleton()) {
@@ -142,15 +150,13 @@ public class Indexer {
           			str.append( content + " ");
           		}
           	}
-          	
-          	
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));   //Correct this needs to be a stringfield
 		  	doc.add(new TextField("text", str.toString() , Field.Store.YES)); //Correct this needs to be Textfield
 		  	writer.addDocument(doc);
-		  	//wantedIds.remove(page.getPageId());
+		  	wantedIds.remove(page.getPageId());
 		  	commit++;
-          //}
+          }
 	  }
 	  writer.commit();
 	  System.out.println("All documents indexed!");

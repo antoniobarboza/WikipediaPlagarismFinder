@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 public class DataManager {
 	private static String eof = "EOF";
 	private static ArrayList<String> wantedStrings = initializeList();
-	private static String idsPath = "./src/main/java/data/pageId.txt";
+	private static String idsPath = "./src/main/java/data/third.txt";
     private static void usage() {
         System.out.println("Command line parameters: (header|pages|outlines|paragraphs|cat) FILE");
         System.exit(-1);
@@ -170,7 +170,17 @@ public class DataManager {
 		e.printStackTrace();
 	}
    }
-   
+   public static HashSet<String> getStopWordsFromFile(String filePath) throws Exception{
+	   BufferedReader reader = new BufferedReader(new FileReader(filePath));
+	   HashSet<String> ids = new HashSet<String>();
+	   String word = reader.readLine();
+	   while( word != null ) {
+		   ids.add(word);
+		   word = reader.readLine();
+	   }
+	   //System.out.println("THe size is:" + ids.size());
+	   return ids;
+   }
    /**
     * Tis method will return all of the pageIds that were a part of the categories we gathered from writePageIdsInCategoryToFile
     * @param filePath
