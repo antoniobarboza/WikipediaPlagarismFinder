@@ -54,7 +54,7 @@ public class SearchFiles {
     }
     ArrayList<String> queries = new ArrayList<String>();
     if ( queryString.equals("")) {
-    	queryString = "The ICC Cricket universe Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+    	queryString = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
     }
     System.out.println("Application Starting Basic Plagarism... \n");
     System.out.println( "Running the query: "+ queryString );

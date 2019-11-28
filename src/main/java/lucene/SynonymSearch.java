@@ -72,7 +72,7 @@ public class SynonymSearch {
     if ( queryString.equals("")) {
     	queryString = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
     }
-
+    
     System.out.println("Plagarism Application SynonymSearcher! Starting... \n\n");
     System.out.println("Running query: "+ queryString);
     
