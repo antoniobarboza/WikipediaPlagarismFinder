@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -72,6 +73,9 @@ public class PositionalSearcher {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
+	    
+	    //This section is experimenting with lucene highlighter to show what was matched in the doc
+	    Highlight h = new Highlight();
 	    TopDocs searchResult = searcher.search(query,50);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
