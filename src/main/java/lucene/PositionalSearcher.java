@@ -20,7 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -59,6 +60,28 @@ public class PositionalSearcher {
 	  try {
 	    Directory dir = FSDirectory.open(Paths.get(indexPath));
 	    IndexReader reader = DirectoryReader.open(dir);
+	    
+	    HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
+		//Create the minHashes to be used
+		 MinHash [] hashes = new MinHash[10];
+		 for(int i = 0; i < hashes.length; i++) {
+			 hashes[i] = new MinHash();
+			 //System.out.println("MINHASH: " + hashes[i].toString());
+		 }
+		 //loop through all docs and construct their min hashes
+		 System.out.println("Creating shingles and generating min-hashes for all documents...");
+		 //System.out.println("Num Docs: " + reader.maxDoc());
+		 for (int i=0; i<reader.maxDoc(); i++) {
+			 Document doc = reader.document(i);
+			 String docText = doc.get("text");
+			 //This is how you get the hashset of doc mins
+			 HashSet<Integer> docMins = LSH.minHash(LSH.createShingles(docText), hashes);
+			 
+			 //need to add this so all hashsets are in a lsit
+			 allMinHashes.put(doc.get("id"), docMins);
+			 //allMinHashes.add(doc.get("id"), LSH.minHash(LSH.createShingles(docText), hashes));
+		 }
+		 
 	    IndexSearcher searcher = new IndexSearcher(reader);
 	    searcher.setSimilarity(new BM25Similarity());
 	    
@@ -74,8 +97,7 @@ public class PositionalSearcher {
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
 	    
-	    //This section is experimenting with lucene highlighter to show what was matched in the doc
-	    Highlight h = new Highlight();
+	    
 	    TopDocs searchResult = searcher.search(query,50);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
