@@ -1,6 +1,7 @@
 package lucene;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -25,7 +26,7 @@ public class UseLSHOnPosIndex{
 			 MinHash [] hashes = new MinHash[10];
 			 for(int i = 0; i < hashes.length; i++) {
 				 hashes[i] = new MinHash();
-				 //System.out.println("I: " + i);
+				 //System.out.println("MINHASH: " + hashes[i].toString());
 			 }
 			 Directory dir = FSDirectory.open(Paths.get(indexPath));
 			 IndexReader reader = DirectoryReader.open(dir);
@@ -35,18 +36,25 @@ public class UseLSHOnPosIndex{
 			 for (int i=0; i<reader.maxDoc(); i++) {
 				 Document doc = reader.document(i);
 				 String docText = doc.get("text");
+				 //This is how you get the hashset of doc mins
 				 HashSet<Integer> docMins = LSH.minHash(LSH.createShingles(docText), hashes);
-				 //System.out.println("DOCMINS: ");
-				 //for(Integer min: docMins) {
-					 //System.out.print(min + " ");
-				// }
-				 //System.out.println();
+				 
+				 //need to add this so all hashsets are in a lsit
 				 allMinHashes.put(doc.get("id"), docMins);
 				 //allMinHashes.add(doc.get("id"), LSH.minHash(LSH.createShingles(docText), hashes));
 			 }
 			 System.out.println("All min-hashes have been created!");
 			 System.out.println("Printing all docs with Jaccard Coefficient Greater than .7");
-			 LSH.printDocIdsWithJaccardCoAtLeast(allMinHashes, (float) 0.7); 
+			 HashMap<String, ArrayList<String>> matches = LSH.getDocIdsWithJaccardCoAtLeast(allMinHashes, (float) 0.7); 
+			 Object [] keys = matches.keySet().toArray();
+			 for(Object key: keys) {
+				 ArrayList<String> ids = matches.get(key.toString());
+				 System.out.print(key.toString() + "::: ");
+				 for(String id: ids) {
+					 System.out.print(id.toString() + ", ");
+				 }
+				 System.out.println();
+			 }
 		}
 		catch(Exception e) {
 			e.printStackTrace();

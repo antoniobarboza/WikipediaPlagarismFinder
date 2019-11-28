@@ -16,7 +16,7 @@ public class LSH {
 	
 	private static String LSHFilePath = "./src/main/java/data/LSH.txt";
 	//This value will determine how large the ngram are (how many words in a row are a gram)
-	private static int nGramValue = 1;
+	private static int nGramValue = 2;
 	
 	public LSH() {
 		
@@ -60,12 +60,12 @@ public class LSH {
 	 */
 	public static HashSet<Integer> minHash(HashSet<String> d, MinHash [] hashes) {
 		HashSet<Integer> minHashSet = new HashSet<Integer>();
-		int numHashes = 0;
+		//int numHashes = 0;
 		for(MinHash hash: hashes) {
 			//System.out.println("Num Hashes: " + numHashes);
 			if(hash == null) return minHashSet;
 			minHashSet.add(hash.getMinHash(d));
-			numHashes++;
+			//numHashes++;
 		}
 		
 		
@@ -110,23 +110,57 @@ public class LSH {
 	}
 	
 	/**
-	 * Prints all doc pairs that 
+	 * Returns a hashmap of array lists that is a docID -> a list of rlated docIDS
 	 * @param allHashes
 	 * @param threshold
 	 */
-	public static void printDocIdsWithJaccardCoAtLeast(HashMap<String, HashSet<Integer>> allHashes, float threshold ) {
+	public static HashMap<String, ArrayList<String>> getDocIdsWithJaccardCoAtLeast(HashMap<String, HashSet<Integer>> allHashes, float threshold ) {
 		String [] keys = allHashes.keySet().toArray(new String[allHashes.size()]);
+		/**for (int i = 0; i < keys.length; i++) { 
+			for (int j = i + 1 ; j < keys.length; j++) { 
+				if (keys[i].equals(keys[j])) {
+					System.out.println("DUPLICATE KEY FOUND!!!!!");
+				} 
+		
+			}
+		}**/
+		//System.out.println();
+		//This is an hashmap of docIDS -> matches to other docIDs based on threshold provided
+		HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
 		int numDocsRelated = 0;
 		for(int i = 0; i < keys.length - 1; i++) {
-			for(int j = i; j < keys.length; j++) {
+			for(int j = i + 1; j < keys.length; j++) {
 				float jac = LSH.calcJaccardCo(allHashes.get(keys[i]), allHashes.get(keys[j]));
 				if(jac >= threshold && !keys[i].equals(keys[j])) {
-					System.out.println("D1: " + keys[i] + " D2: " + keys[j] + " Jaccard Coefficient: " + jac);
+					//System.out.println("D1: " + keys[i] + " D2: " + keys[j] + " Jaccard Coefficient: " + jac);
+					/**System.out.print(keys[i] + " grams: ");
+					for(Integer gram: allHashes.get(keys[i])) {
+						System.out.print( gram + " ");
+					}
+					System.out.print("\n" + keys[j] + " grams: " );
+					for(Integer gram: allHashes.get(keys[j])) {
+						System.out.print( gram + " ");
+					}*/
+					//The next 2 ifs are to put the related docs in a hashmap
+					if(matches.get(keys[i]) == null){
+						ArrayList<String> tmp = new ArrayList<String>();
+						tmp.add(keys[j]);
+						matches.put(keys[i], tmp);
+					}
+					else matches.get(keys[i]).add(keys[j]);
+					
+					if(matches.get(keys[j]) == null){
+						ArrayList<String> tmp = new ArrayList<String>();
+						tmp.add(keys[i]);
+						matches.put(keys[j], tmp);
+					}
+					else matches.get(keys[j]).add(keys[i]);
 					numDocsRelated++;
 				}
 			}
 		}
 		System.out.println("Num Docs Related: " + numDocsRelated);
+		return matches;
 	}
 	
 	private static String[] convertStringToArrayOfWords(String splitMe) {

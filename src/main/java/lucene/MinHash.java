@@ -15,8 +15,8 @@ import java.util.HashSet;
 public class MinHash {
 	private long a;
 	private int b;
-	private int c = 10007;
-	private int x = 10000;
+	private int c = 2147483647; //10007;
+	private int x = 2147483646; //10000;
 	
 	public MinHash() {
 		//generates a random number between 0 and x
@@ -32,7 +32,11 @@ public class MinHash {
 	 */
 	private int getHash(String s) {
 		//System.out.println("S HASH CODE: " + s.hashCode());
-		return (int) ((a * ( Math.abs(s.hashCode())) + b) % c);
+		//System.out.println("x = " + s.hashCode());
+		if(s.isEmpty()) return -1;
+		int tmp = (int) ((a * (s.hashCode()) + b) % c);
+		//if(tmp == 2147483647 ) System.out.println("MAXINT: " + s);
+		return tmp;
 	}
 	
 	/**
@@ -41,20 +45,28 @@ public class MinHash {
 	 * @return
 	 */
 	public int getMinHash(HashSet<String> words) {
+		/**for(String word: words) {
+			System.out.print(word + " ");
+		}
+		System.out.println();*/
 		
 		int min = Integer.MAX_VALUE;
-		int numWords = 0;
+		//int numWords = 0;
 		for(String word: words) {
 			//System.out.println("Hashing " + word );
 			int tmp = getHash(word);
 			//System.out.println("HashValue: " + tmp);
 			if( tmp < min) min = tmp;
-			numWords++;
+			//numWords++;
 		}
 		//System.out.println("Num WORDS: " + numWords);
 		return min;
 	}
 	
+	public String toString()
+	{
+		return "f(x) = (" + a + "x + " + b + ") % " + c;
+	}
 	//This method is not needed just hardcoding max value for strings
 	/**
 	 * This method generates the nearest prime number to the number given
