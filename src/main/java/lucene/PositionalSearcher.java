@@ -25,6 +25,7 @@ import java.util.HashSet;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -35,7 +36,10 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNodeImpl;
+import org.apache.lucene.queryparser.flexible.standard.builders.MultiPhraseQueryNodeBuilder;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -57,10 +61,11 @@ public class PositionalSearcher {
   public static void main(String[] args) throws Exception{
 	//This is a directory to the index
 	    String indexPath = "./src/main/java/positionalIndex";
-	    String query = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+	    //String query = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+	    String query = "cricket is a sport";
 	    HashMap<String, ArrayList<String>> matches = null;
 	    //true if the locality sensitive hashing should be used false other wise
-	    boolean lsh = true;
+	    boolean lsh = false;
 	    
 	    HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
 	    if(lsh) {
@@ -110,16 +115,34 @@ public class PositionalSearcher {
 	    
 	    //This sets up the query
 	    Analyzer analyzer = new StandardAnalyzer();
-	    //QueryParser queryParser = new QueryParser("text", analyzer);
+	    QueryParser queryParser = new QueryParser("text", analyzer);
 	    //QueryParser queryParser = new QueryParser(Version.LUCENE_7_2_0, .Term_Vector_Position, analyzer); 
-	    ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("text", analyzer);
-	    //Query query = queryParser.parse(QueryParser.escape(queryString));
+	    //ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("text", analyzer);
+	    //MultiPhraseQuery mpq = (MultiPhraseQuery) queryParser.parse("\"Testing\"");
+	    MultiPhraseQuery query;
 	    
+	    MultiPhraseQuery.Builder pqbuild = new MultiPhraseQuery.Builder();
+	    pqbuild.setSlop(2);
+	    String [] words= LSH.convertStringToArrayOfWords(LSH.removePunctuationAndStopWords(queryString));
+	    Term [] terms = new Term[words.length];
+	    for(int i = 0; i < words.length; i++) {
+	    	terms[i] = new Term("text", words[i]);
+	    	//System.out.println(words[i]);
+	    }
+	    
+	    for(int i = 0; i < terms.length; i++) {
+	    	pqbuild.add(terms[i]);
+	    }
+	    pqbuild.setSlop(2);
+	    query = (MultiPhraseQuery) pqbuild.build();
+	    
+	    //Query query = queryParser.parse(QueryParser.escape(queryString));
+	    //MultiPhraseQuery mpq;
 	    //String escString = LSH.removePunctuationAndStopWords(queryString);
 	    //System.out.println("ESC STRING : " + escString);
 	    //BytesRef bytes = new BytesRef(escString);
 	    
-	    Query query = queryParser.createPhraseQuery("text", queryString);
+	    //Query query = queryParser.createPhraseQuery("text", queryString);
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());

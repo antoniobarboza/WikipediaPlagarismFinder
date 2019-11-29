@@ -16,7 +16,7 @@ public class LSH {
 	
 	private static String LSHFilePath = "./src/main/java/data/LSH.txt";
 	//This value will determine how large the ngram are (how many words in a row are a gram)
-	private static int nGramValue = 15;
+	private static int nGramValue = 5;
 	private static HashSet<String> stopWords = DataManager.getStopWordsFromFile("./src/main/java/data/stopWords.txt");
 	
 	public LSH() {
@@ -200,13 +200,20 @@ public class LSH {
 		return matches;
 	}
 	
-	private static String[] convertStringToArrayOfWords(String splitMe) {
+	public static String[] convertStringToArrayOfWords(String splitMe) {
 		//first replace all removes all punctuation, second replaces all multiple spaces with 1
     	String line = splitMe.replaceAll("\\p{P}", "").toLowerCase().replaceAll("\\s+", " ");
     	return line.split(" ");
 	}
 	public static String removePunctuationAndStopWords(String str) {
-		return str.replaceAll("\\p{P}", "").toLowerCase().replaceAll("\\s+", " ");
+		String [] temp = convertStringToArrayOfWords(str.replaceAll("\\p{P}", "").toLowerCase().replaceAll("\\s+", " "));
+		StringBuilder build = new StringBuilder();
+		for(String word: temp) {
+			if(!stopWords.contains(word)) {
+				build.append(word + " ");
+			}
+		}
+		return build.toString();
 	}
 	
 	public static String getFilePath() {
