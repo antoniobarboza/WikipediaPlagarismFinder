@@ -170,15 +170,20 @@ public class DataManager {
 		e.printStackTrace();
 	}
    }
-   public static HashSet<String> getStopWordsFromFile(String filePath) throws Exception{
+   public static HashSet<String> getStopWordsFromFile(String filePath){
+	   HashSet<String> ids = null;
+	   try {
 	   BufferedReader reader = new BufferedReader(new FileReader(filePath));
-	   HashSet<String> ids = new HashSet<String>();
+	   ids = new HashSet<String>();
 	   String word = reader.readLine();
 	   while( word != null ) {
 		   ids.add(word);
 		   word = reader.readLine();
 	   }
 	   //System.out.println("THe size is:" + ids.size());
+	   }catch (Exception e) {
+		   e.printStackTrace();
+	   }
 	   return ids;
    }
    /**

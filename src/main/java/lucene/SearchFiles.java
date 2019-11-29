@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -47,6 +49,39 @@ public class SearchFiles {
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
     
+    //LSH
+    HashMap<String, ArrayList<String>> matches = null;
+    //true if the locality sensitive hashing should be used false other wise
+    boolean lsh = false;
+    
+    //This creates the hashMap of Id's -> lis of matches based on threshold provided
+    HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
+    if(lsh) {
+    	Directory dir = FSDirectory.open(Paths.get(indexPath));
+    	IndexReader reader = DirectoryReader.open(dir);
+    	//Create the minHashes to be used
+    	MinHash [] hashes = new MinHash[10];
+    	for(int i = 0; i < hashes.length; i++) {
+    		hashes[i] = new MinHash();
+    		//System.out.println("MINHASH: " + hashes[i].toString());
+    	}
+    	//loop through all docs and construct their min hashes
+    	System.out.println("Creating shingles and generating min-hashes for all documents...");
+    	//System.out.println("Num Docs: " + reader.maxDoc());
+    	for (int i=0; i<reader.maxDoc(); i++) {
+    		Document doc = reader.document(i);
+    		String docText = doc.get("text");
+    		//This is how you get the hashset of doc mins
+    		HashSet<Integer> docMins = LSH.minHash(LSH.createShingles(docText), hashes);
+		 
+    		//need to add this so all hashsets are in a lsit
+    		allMinHashes.put(doc.get("id"), docMins);
+    		//allMinHashes.add(doc.get("id"), LSH.minHash(LSH.createShingles(docText), hashes));
+    	}
+    	System.out.println("Retrieving all documents with Jaccard Coefficient Greater than .7");
+		matches = LSH.getDocIdsWithJaccardCoAtLeast(allMinHashes, (float) 0.7); 
+    }
+    
     //Code to get the argument string 
     String queryString = "";
     for (int i=0; i<args.length; i ++) {
@@ -68,7 +103,7 @@ public class SearchFiles {
     try {
     	for(int i = 0;i < queries.size(); i++) {
     		if(i != 0) System.out.print("\n\n\n");
-    		runSearch(queries.get(i), indexPath);
+    		runSearch(queries.get(i), indexPath, matches, lsh);
     	}
     } catch(Exception e) {
     	System.out.println("Query failed! " + e.getMessage());
@@ -76,7 +111,7 @@ public class SearchFiles {
     
   }
   
-  private static void runSearch(String queryString, String indexPath) throws Exception {
+  private static void runSearch(String queryString, String indexPath, HashMap<String, ArrayList<String>> matches, boolean lsh) throws Exception {
 	    Directory dir = FSDirectory.open(Paths.get(indexPath));
 	    IndexReader reader = DirectoryReader.open(dir);
 	    IndexSearcher searcher = new IndexSearcher(reader);
@@ -112,6 +147,17 @@ public class SearchFiles {
 	    	String text = document.get("text").toString();
 	    	//System.out.println("Page ID: " + id + ":\nContents: " + text);
 	    	Pscores.add(calculatePlagarismNaive( queryString, text ));
+	    	//If we are using LSH this prints out all related docIDs below the docs
+	    	if(lsh) {
+	    		ArrayList<String> related = matches.get(id);
+	    		if(related != null) {
+	    			System.out.print("\t related doc IDS: ");
+	    			for(String docID: related) {
+	    				System.out.print(docID + " ");
+	    			}
+	    			System.out.println();
+	    		}
+	    	}
 	    	//calculatePlagarism( queryString, text );
 	    }
 	    double high = 0.0;
@@ -121,7 +167,7 @@ public class SearchFiles {
 	    	}
 		    
 	    }
-	    System.out.println( "The percent plagiarized on sentince by sentince basis: " + high * 100 + "%" );
+	    System.out.println( "The percent plagiarized on sentence by sentence basis: " + high * 100 + "%" );
 
   }
   private static double calculatePlagarismNaive( String queryString, String content ) {

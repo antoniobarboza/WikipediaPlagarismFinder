@@ -13,7 +13,7 @@ import org.apache.lucene.store.FSDirectory;
 
 /**
  * This class will use the LSH class to create list of hash values for every doc
- * NEED TO REMOVE ESCAPE CHARACTERS
+ * 
  * @author Bobby
  *
  */
@@ -46,14 +46,15 @@ public class UseLSHOnPosIndex{
 			 System.out.println("All min-hashes have been created!");
 			 System.out.println("Printing all docs with Jaccard Coefficient Greater than .7");
 			 HashMap<String, ArrayList<String>> matches = LSH.getDocIdsWithJaccardCoAtLeast(allMinHashes, (float) 0.7); 
+			 
 			 Object [] keys = matches.keySet().toArray();
 			 for(Object key: keys) {
 				 ArrayList<String> ids = matches.get(key.toString());
-				 System.out.print(key.toString() + "::: ");
+				 //System.out.print(key.toString() + "::: ");
 				 for(String id: ids) {
-					 System.out.print(id.toString() + ", ");
+					 //System.out.print(id.toString() + ", ");
 				 }
-				 System.out.println();
+				 //System.out.println();
 			 }
 		}
 		catch(Exception e) {

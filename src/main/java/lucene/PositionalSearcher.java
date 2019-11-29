@@ -16,12 +16,17 @@
  */
 package lucene;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -29,6 +34,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
@@ -39,60 +45,81 @@ import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.Version;
 
 /** Simple command-line based search demo. */
 public class PositionalSearcher {
 	
   private PositionalSearcher() {}
 
-  /** Simple command-line based search demo. */
-  public static void main(String[] args){
+  /** Simple command-line based search demo. 
+ * @throws Exception */
+  public static void main(String[] args) throws Exception{
 	//This is a directory to the index
 	    String indexPath = "./src/main/java/positionalIndex";
-	    String query = "Basketball is a non-contact sport played on a rectangular court.";
+	    String query = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+	    HashMap<String, ArrayList<String>> matches = null;
+	    //true if the locality sensitive hashing should be used false other wise
+	    boolean lsh = true;
+	    
+	    HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
+	    if(lsh) {
+	    	Directory dir = FSDirectory.open(Paths.get(indexPath));
+	    	IndexReader reader = DirectoryReader.open(dir);
+	    	//Create the minHashes to be used
+	    	MinHash [] hashes = new MinHash[10];
+	    	for(int i = 0; i < hashes.length; i++) {
+	    		hashes[i] = new MinHash();
+	    		//System.out.println("MINHASH: " + hashes[i].toString());
+	    	}
+	    	//loop through all docs and construct their min hashes
+	    	System.out.println("Creating shingles and generating min-hashes for all documents...");
+	    	//System.out.println("Num Docs: " + reader.maxDoc());
+	    	for (int i=0; i<reader.maxDoc(); i++) {
+	    		Document doc = reader.document(i);
+	    		String docText = doc.get("text");
+	    		//This is how you get the hashset of doc mins
+	    		HashSet<Integer> docMins = LSH.minHash(LSH.createShingles(docText), hashes);
+			 
+	    		//need to add this so all hashsets are in a lsit
+	    		allMinHashes.put(doc.get("id"), docMins);
+	    		//allMinHashes.add(doc.get("id"), LSH.minHash(LSH.createShingles(docText), hashes));
+	    	}
+	    	System.out.println("Retrieving all documents with Jaccard Coefficient Greater than .7");
+			matches = LSH.getDocIdsWithJaccardCoAtLeast(allMinHashes, (float) 0.7); 
+	    }
 	    //We are using a phraseQuery here because it checks for the terms in consecutive order within slop
 	    //PhraseQuery doc;
-	    runSearch(query, indexPath);
+	    runSearch(query, indexPath, matches, lsh);
     
   }
   
-  private static void runSearch(String queryString, String indexPath){
+  /**
+   * The query string to be used
+   * @param queryString
+   * @param indexPath
+   * @param matches
+   */
+  private static void runSearch(String queryString, String indexPath, HashMap<String, ArrayList<String>> matches, boolean lsh){
 	  try {
-	    Directory dir = FSDirectory.open(Paths.get(indexPath));
-	    IndexReader reader = DirectoryReader.open(dir);
 	    
-	    HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
-		//Create the minHashes to be used
-		 MinHash [] hashes = new MinHash[10];
-		 for(int i = 0; i < hashes.length; i++) {
-			 hashes[i] = new MinHash();
-			 //System.out.println("MINHASH: " + hashes[i].toString());
-		 }
-		 //loop through all docs and construct their min hashes
-		 System.out.println("Creating shingles and generating min-hashes for all documents...");
-		 //System.out.println("Num Docs: " + reader.maxDoc());
-		 for (int i=0; i<reader.maxDoc(); i++) {
-			 Document doc = reader.document(i);
-			 String docText = doc.get("text");
-			 //This is how you get the hashset of doc mins
-			 HashSet<Integer> docMins = LSH.minHash(LSH.createShingles(docText), hashes);
-			 
-			 //need to add this so all hashsets are in a lsit
-			 allMinHashes.put(doc.get("id"), docMins);
-			 //allMinHashes.add(doc.get("id"), LSH.minHash(LSH.createShingles(docText), hashes));
-		 }
-		 
+		Directory dir = FSDirectory.open(Paths.get(indexPath));
+	    IndexReader reader = DirectoryReader.open(dir);
 	    IndexSearcher searcher = new IndexSearcher(reader);
 	    searcher.setSimilarity(new BM25Similarity());
 	    
 	    //This sets up the query
 	    Analyzer analyzer = new StandardAnalyzer();
-	    QueryParser queryParser = new QueryParser("text", analyzer);
-	    Query query = queryParser.parse(QueryParser.escape(queryString));
+	    //QueryParser queryParser = new QueryParser("text", analyzer);
+	    //QueryParser queryParser = new QueryParser(Version.LUCENE_7_2_0, .Term_Vector_Position, analyzer); 
+	    ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("text", analyzer);
+	    //Query query = queryParser.parse(QueryParser.escape(queryString));
 	    
+	    //String escString = LSH.removePunctuationAndStopWords(queryString);
+	    //System.out.println("ESC STRING : " + escString);
+	    //BytesRef bytes = new BytesRef(escString);
 	    
-	    BytesRef bytes = new BytesRef(QueryParser.escape(queryString));
-	    //PhraseQuery query = new PhraseQuery(10, "text", bytes);
+	    Query query = queryParser.createPhraseQuery("text", queryString);
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
@@ -117,6 +144,16 @@ public class PositionalSearcher {
 	    	String id = document.get("id");
 	    	String text = document.get("text").toString();
 	    	System.out.println("Page ID: " + id + ":\nContents: " + text);
+	    	if(lsh) {
+	    		ArrayList<String> related = matches.get(id);
+	    		if(related != null) {
+	    			System.out.print("\t related doc IDS: ");
+	    			for(String docID: related) {
+	    				System.out.print(docID + " ");
+	    			}
+	    			System.out.println();
+	    		}
+	    	}
 	    }
 	  }
 	  catch(Exception e) {
