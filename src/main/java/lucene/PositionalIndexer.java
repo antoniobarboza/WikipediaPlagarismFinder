@@ -127,7 +127,9 @@ public class PositionalIndexer {
 	  long startTime = System.currentTimeMillis();
 	  //System.out.println("Start time: 0 milliseconds");
 	  System.out.println("Positionally indexing documents...");
+	  int counter = 0;
 	  for(Page page : pages) {
+		  counter++;
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
@@ -145,6 +147,7 @@ public class PositionalIndexer {
                   commit = 0;
                   break;
               }
+        	  if(counter == 10000) break;
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 

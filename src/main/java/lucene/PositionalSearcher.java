@@ -38,6 +38,10 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNodeImpl;
 import org.apache.lucene.queryparser.flexible.standard.builders.MultiPhraseQueryNodeBuilder;
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BooleanQuery.Builder;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.PhraseQuery;
@@ -60,12 +64,13 @@ public class PositionalSearcher {
  * @throws Exception */
   public static void main(String[] args) throws Exception{
 	//This is a directory to the index
-	    String indexPath = "./src/main/java/positionalIndex";
-	    //String query = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
-	    String query = "cricket is a sport";
+	    //String indexPath = "./src/main/java/positionalIndex";
+	    String indexPath = "./src/main/java/index";
+	    String query = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.";
+	    //String query = "cricket is a sport";
 	    HashMap<String, ArrayList<String>> matches = null;
 	    //true if the locality sensitive hashing should be used false other wise
-	    boolean lsh = false;
+	    boolean lsh = true;
 	    
 	    HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
 	    if(lsh) {
@@ -120,6 +125,12 @@ public class PositionalSearcher {
 	    //ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("text", analyzer);
 	    //MultiPhraseQuery mpq = (MultiPhraseQuery) queryParser.parse("\"Testing\"");
 	    MultiPhraseQuery query;
+	    /**Query query;
+	    Builder build = new BooleanQuery.Builder();
+	    BooleanClause clause = new BooleanClause(query, null);
+	    
+	    build.add(clause);*/
+	    
 	    
 	    MultiPhraseQuery.Builder pqbuild = new MultiPhraseQuery.Builder();
 	    pqbuild.setSlop(2);
@@ -133,7 +144,7 @@ public class PositionalSearcher {
 	    for(int i = 0; i < terms.length; i++) {
 	    	pqbuild.add(terms[i]);
 	    }
-	    pqbuild.setSlop(2);
+	    pqbuild.setSlop(10);
 	    query = (MultiPhraseQuery) pqbuild.build();
 	    
 	    //Query query = queryParser.parse(QueryParser.escape(queryString));

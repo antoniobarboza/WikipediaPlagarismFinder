@@ -54,7 +54,7 @@ public class SearchFiles {
     //true if the locality sensitive hashing should be used false other wise
     boolean lsh = false;
     
-    //This creates the hashMap of Id's -> lis of matches based on threshold provided
+    //This creates the hashMap of Id's -> list of matches based on threshold provided
     HashMap<String, HashSet<Integer>> allMinHashes = new HashMap<String, HashSet<Integer>>();
     if(lsh) {
     	Directory dir = FSDirectory.open(Paths.get(indexPath));
