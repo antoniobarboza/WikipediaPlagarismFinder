@@ -70,7 +70,7 @@ public class SynonymSearch {
     //queries.add("pokemon puzzle league")
     //System.out.println("Query: Basketball is a non-contact");
     if ( queryString.equals("")) {
-    	queryString = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+    	queryString = "The ICC Cricket universe Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
     }
     
     System.out.println("Plagarism Application SynonymSearcher! Starting... \n\n");

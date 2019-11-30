@@ -15,6 +15,7 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+   
 
     <dependencies>
        <dependency>
@@ -22,7 +23,6 @@
             <artifactId>trec-car-tools-java</artifactId>
             <version>17</version>
         </dependency>
-        
         <dependency>
             <groupId>com.github.jaytaylor</groupId>
             <artifactId>jaws</artifactId>
@@ -82,7 +82,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>/Program1/src/main/java/lucene/IndexFiles.java</mainClass>
+                            <mainClass>/WikipediaPlagarism/src/main/java/lucene/IndexFiles.java</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

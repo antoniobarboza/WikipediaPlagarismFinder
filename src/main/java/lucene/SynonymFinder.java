@@ -16,7 +16,6 @@ public class SynonymFinder {
         //setting path for the WordNet Directory
         WordNetDatabase database = WordNetDatabase.getFileInstance();
         _database = database;
-       
 	}
 	public static HashSet<String> findSyn( String wordForm ) {
 		//This will return a hashset of words that are syn but will return null if there are none!
