@@ -64,6 +64,7 @@ public class SearchFiles {
     	for(int i = 0; i < hashes.length; i++) {
     		hashes[i] = new MinHash();
     		//System.out.println("MINHASH: " + hashes[i].toString());
+    		
     	}
     	//loop through all docs and construct their min hashes
     	System.out.println("Creating shingles and generating min-hashes for all documents...");
