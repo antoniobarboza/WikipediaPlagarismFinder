@@ -5,6 +5,11 @@ and running the application and different aspects of it.
 
 INSTALLATION- Clone the repo - https://github.com/antoniobarboza/WikipediaPlagarismFinder.git
 
+**I created a bash script for downloading the dataset and Wordnet auto..
+chmod +x downoadExternalFiles.sh
+./downoadExternalFiles.sh
+(Skip step 1 and step 2) - if using bash script. 
+
 1. Download the data that is needed for the project to run! 
    http://trec-car.cs.unh.edu/datareleases/v2.0-2017-08-20/all-enwiki-20170820.tar.xz
    a. unzip the file and place it in the ./src/main/java/data directory
@@ -19,6 +24,8 @@ INSTALLATION- Clone the repo - https://github.com/antoniobarboza/WikipediaPlagar
 
 5. INDEXER 
    java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.Indexer
+   
+6. Application-
 
 
    
