@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "This file is going to download the external file automaticly and unzip and place them in the propper project directories"
 echo "Begining Download for the DataSet... It is very large so be patient" 
 cd ./src/main/java/data
