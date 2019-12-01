@@ -51,6 +51,7 @@ public class SynonymSearch {
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
+	boolean doubleSpace = true;
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
     String qrelPath = "./src/main/java/QRELFiles";
