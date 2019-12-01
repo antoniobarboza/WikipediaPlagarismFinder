@@ -291,7 +291,7 @@ public class DataManager {
 	   return q;
    }
    
-   private static String convertToId(String docText) {
+   public static String convertToId(String docText) {
 		  return docText.replaceAll("\\s","%20");
 	  }
    
