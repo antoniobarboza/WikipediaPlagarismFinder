@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.BreakIterator;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +40,8 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+import com.sun.tools.javac.util.Pair;
+
 /** Simple command-line based search demo. */
 public class SearchFiles {
 	
@@ -46,6 +49,7 @@ public class SearchFiles {
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
+	boolean doubleSpace = true;
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
     
@@ -90,10 +94,14 @@ public class SearchFiles {
     }
     ArrayList<String> queries = new ArrayList<String>();
     if ( queryString.equals("")) {
-    	queryString = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
+    	queryString = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.";
+    }
+    System.out.println( "Running the query: "+ queryString );
+    if ( doubleSpace ) {
+    	queryString = queryString.replaceAll("\\. ", "\\.  " );
     }
     System.out.println("Application Starting Basic Plagarism... \n");
-    System.out.println( "Running the query: "+ queryString );
+
     queries.add(queryString);
     
     //queries.add("whale vocalization production of sound");
@@ -126,7 +134,7 @@ public class SearchFiles {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
-	    TopDocs searchResult = searcher.search(query,3);
+	    TopDocs searchResult = searcher.search(query,1);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
 	    //System.out.println("Results found: " + searchResult.totalHits);
@@ -140,14 +148,16 @@ public class SearchFiles {
 	    }
 	    //Instead of just displaying the contents.. I need to see how much of the input String is copied.
 	    
-	    ArrayList<Double> Pscores = new ArrayList<Double>();
-	    
+	    ArrayList<Pair<Double, String>> Pscores = new ArrayList<Pair<Double, String>>();
+
 	    for (int j=0; j < hits.length; j++ ) {
 	    	Document document = searcher.doc(hits[j].doc);
 	    	String id = document.get("id");
 	    	String text = document.get("text").toString();
 	    	//System.out.println("Page ID: " + id + ":\nContents: " + text);
-	    	Pscores.add(calculatePlagarismNaive( queryString, text ));
+	    	Pair<Double, String> ins = new Pair<Double, String> (calculatePlagarismNaive( queryString, text ), id );
+	    	Pscores.add(ins);
+	    	
 	    	//If we are using LSH this prints out all related docIDs below the docs
 	    	if(lsh) {
 	    		ArrayList<String> related = matches.get(id);
@@ -161,14 +171,16 @@ public class SearchFiles {
 	    	}
 	    	//calculatePlagarism( queryString, text );
 	    }
+	    DecimalFormat df = new DecimalFormat("0.00");
 	    double high = 0.0;
-	    for ( Double Pscore : Pscores ) {
-	    	if ( high < Pscore ) {
-	    		high = Pscore;
-	    	}
-		    
+	    String curDoc = "";
+	    for ( Pair<Double, String> Pscore : Pscores ) {
+	    	if ( high < Pscore.fst ) {
+	    		high = Pscore.fst;
+	    		curDoc = Pscore.snd;
+	    	}		    
 	    }
-	    System.out.println( "The percent plagiarized on sentence by sentence basis: " + high * 100 + "%" );
+	    System.out.println( "The percent plagiarized on sentence by sentence basis: " + df.format(high * 100) + "% From Document: " + curDoc );
 
   }
   private static double calculatePlagarismNaive( String queryString, String content ) {
@@ -176,17 +188,21 @@ public class SearchFiles {
 	  //The group words variable will be used to group the total words that are used in the contains. 
 	  queryString = queryString.toLowerCase();
 	  content = content.toLowerCase();
+	  content = content.replaceAll("['\"]", "");
+	  
 	  int totalsent = 0;
 	  int sentinceMatches = 0;
 	  BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
 	  String source = queryString;
 	  iterator.setText(source);
 	  int start = iterator.first();
+	  System.out.println("Content \n" + content);
 	  for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
 		  totalsent++;
 		  String sent = source.substring(start,end);
-		  //System.out.println("HERE: " + sent);
+		  System.out.println(": " + sent);
 		  if ( content.contains(sent.substring(0, sent.length()-1))) {
+			  System.out.println("MAtch");
 			  sentinceMatches++;
 		  }
 	  }
