@@ -24,6 +24,8 @@ chmod +x downoadExternalFiles.sh
 
 5. INDEXER 
    java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.Indexer
+   
+6. Application-
 
 
    
