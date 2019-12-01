@@ -1,22 +1,33 @@
-# IR_program1
-Tony and Bobby's individual program 1 solution
+# Information Retreval Plagarism Project - Tony and Bobby
 
-*To run Maven build*
-mvn clean install
+This is a readme for the project and will include the full process for downloading 
+and running the application and different aspects of it. 
 
-*Compile
-mvn clean compile assembly:single
+INSTALLATION- Clone the repo - https://github.com/antoniobarboza/WikipediaPlagarismFinder.git
 
-*How to run the indexer: 
-java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.Indexer
+**I created a bash script for downloading the dataset and Wordnet auto..
+chmod +x downloadExternalFiles.sh
+./downloadExternalFiles.sh
+(Skip step 1 and step 2) - if using bash script. 
 
-*The searcher will by default run the three queries: 
-Q1 power nap benefits
-Q2 whale vocalization production of sound
-Q3 pokemon puzzle league
+1. Download the data that is needed for the project to run! 
+   http://trec-car.cs.unh.edu/datareleases/v2.0-2017-08-20/all-enwiki-20170820.tar.xz
+   a. unzip the file and place it in the ./src/main/java/data directory
 
-NOTE: If you give the SearchFiles arguments then it will run the three queries above plus the arguments as a query!
-*How to run the searcher:
-java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.SearchFiles
+2. Download WordNet-3.0 
+   http://wordnetcode.princeton.edu/3.0/WordNet-3.0.tar.gz
+   a. unzip the file and place it in the ./src/main/java/data directory
 
+3. mvn clean install
+
+4. mvn clean compile assembly:single
+
+5. INDEXER 
+   java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.Indexer
+   
+6. Application-
+
+
+   
+   
 
