@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.BreakIterator;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import com.sun.tools.javac.util.Pair;
 
 /** Simple command-line based search demo. */
 public class SynonymSearch {
@@ -82,19 +84,21 @@ public class SynonymSearch {
     //At this point I have expanded all of the queries by 1 word syn 
     
     try {
-    	double max = 0;
+    	Pair<Double, String> max = new Pair<Double, String>(0.0, "");
     	String exp = "";
     	for(int i = 0;i < queries.size(); i++) {
     		if(i != 0) {
     			//System.out.print("\n\n\n");
     		}
-    		double score = runSearch(queries.get(i), indexPath);
-    		if ( score > max ) {
+    		Pair<Double, String> score = runSearch(queries.get(i), indexPath);
+    		if ( score.fst > max.fst ) {
     			max = score;
     			exp = queries.get(i);
     		}
     	}
-    	System.out.println("\nThe Plagarism Score calculated on a sentince by sentince basis with Syn Query Expansion = " + max*100 + "%");
+    	DecimalFormat df = new DecimalFormat("0.00");
+    	System.out.println("\nThe Plagarism Score calculated on a sentince by sentince basis with Syn Query Expansion = " + df.format(max.fst*100) + "% From Document: " + max.snd);
+ 
     } catch(Exception e) {
     	System.out.println("Query failed! " + e.getMessage());
     }
@@ -134,7 +138,7 @@ public class SynonymSearch {
 	  }
 	  return queries;
   }
-  private static double runSearch(String queryString, String indexPath) throws Exception {
+  private static Pair<Double, String> runSearch(String queryString, String indexPath) throws Exception {
 	    Directory dir = FSDirectory.open(Paths.get(indexPath));
 	    IndexReader reader = DirectoryReader.open(dir);
 	    IndexSearcher searcher = new IndexSearcher(reader);
@@ -162,19 +166,19 @@ public class SynonymSearch {
 	    }
 	    //Instead of just displaying the contents.. I need to see how much of the input String is copied.
 	    
-	    ArrayList<Double> Pscores = new ArrayList<Double>();
+	    ArrayList<Pair<Double, String>> Pscores = new ArrayList<Pair<Double, String>>();
 	    
 	    for (int j=0; j < hits.length; j++ ) {
 	    	Document document = searcher.doc(hits[j].doc);
 	    	String id = document.get("id");
 	    	String text = document.get("text").toString();
 	    	//System.out.println("Page ID: " + id + ":\nContents: " + text);
-	    	Pscores.add(calculatePlagarismNaive( queryString, text ));
+	    	Pscores.add(new Pair<Double, String>(calculatePlagarismNaive( queryString, text ), id));
 	    	//calculatePlagarism( queryString, text );
 	    }
-	    double high = 0.0;
-	    for ( Double Pscore : Pscores ) {
-	    	if ( high < Pscore ) {
+	    Pair<Double, String> high = new Pair<Double, String>(0.0, "");
+	    for ( Pair<Double, String> Pscore : Pscores ) {
+	    	if ( high.fst < Pscore.fst ) {
 	    		high = Pscore;
 	    	}
 		    
@@ -186,6 +190,7 @@ public class SynonymSearch {
   private static double calculatePlagarismNaive( String queryString, String content ) {
 	  //This function is going to look at he input string of the program and determine how much of it copied
 	  //The group words variable will be used to group the total words that are used in the contains. 
+	  //DecimalFormat df = new DecimalFormat("0.00");
 	  queryString = queryString.toLowerCase();
 	  content = content.toLowerCase();
 	  int totalsent = 0;
