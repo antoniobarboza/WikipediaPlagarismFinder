@@ -3,7 +3,8 @@
 echo "This file is going to download the external file automaticly and unzip and place them in the propper project directories"
 echo "Begining Download for the DataSet... It is very large so be patient" 
 cd ./src/main/java/data
-if [ -d "all-enwiki-20170820" ] then 
+if [ -d "all-enwiki-20170820" ]
+then 
 	echo "Data exists" 
 else
 	wget http://trec-car.cs.unh.edu/datareleases/v2.0-2017-08-20/all-enwiki-20170820.tar.xz
@@ -12,7 +13,8 @@ else
 	echo "Done un-taring the file"
 fi
 
-if [ -d "WordNet-3.0" ] then
+if [ -d "WordNet-3.0" ]
+then
 	echo "WordNet Dependency installed already!"
 else 
 	echo "Downloading the WordNet dependency" 
