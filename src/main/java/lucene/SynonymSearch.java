@@ -76,7 +76,9 @@ public class SynonymSearch {
     if ( queryString.equals("")) {
     	queryString = "The ICC Cricket universe Cup is the international championship of One Day International (ODI) cricket.  The Second Den.  Non Plagarized";
     }
-    
+    if ( doubleSpace ) {
+    	queryString = queryString.replaceAll("\\. ", "\\.  " );
+    }
     System.out.println("Plagarism Application SynonymSearcher! Starting... \n\n");
     System.out.println("Running query: "+ queryString);
     
@@ -87,7 +89,6 @@ public class SynonymSearch {
     
     try {
     	Pair<Double, String> max = new Pair<Double, String>(0.0, "");
-    	String exp = "";
     	for(int i = 0;i < queries.size(); i++) {
     		if(i != 0) {
     			//System.out.print("\n\n\n");
@@ -95,7 +96,6 @@ public class SynonymSearch {
     		Pair<Double, String> score = runSearch(queries.get(i), indexPath);
     		if ( score.fst > max.fst ) {
     			max = score;
-    			exp = queries.get(i);
     		}
     	}
     	DecimalFormat df = new DecimalFormat("0.00");
@@ -154,7 +154,7 @@ public class SynonymSearch {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
-	    TopDocs searchResult = searcher.search(query,5);
+	    TopDocs searchResult = searcher.search(query,10);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
 	    //System.out.println("Results found: " + searchResult.totalHits);
@@ -192,20 +192,23 @@ public class SynonymSearch {
   private static double calculatePlagarismNaive( String queryString, String content ) {
 	  //This function is going to look at he input string of the program and determine how much of it copied
 	  //The group words variable will be used to group the total words that are used in the contains. 
-	  //DecimalFormat df = new DecimalFormat("0.00");
 	  queryString = queryString.toLowerCase();
 	  content = content.toLowerCase();
+	  content = content.replaceAll("['\"]", "");
+	  
 	  int totalsent = 0;
 	  int sentinceMatches = 0;
 	  BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
 	  String source = queryString;
 	  iterator.setText(source);
 	  int start = iterator.first();
+	  //System.out.println("Content \n" + content);
 	  for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
 		  totalsent++;
 		  String sent = source.substring(start,end);
-		  //System.out.println("HERE: " + sent);
+		  System.out.println(": " + sent);
 		  if ( content.contains(sent.substring(0, sent.length()-1))) {
+			  System.out.println("MAtch");
 			  sentinceMatches++;
 		  }
 	  }
