@@ -65,9 +65,9 @@ public class PositionalSearcher {
   public static void main(String[] args) throws Exception{
 	//This is a directory to the index
 	    //String indexPath = "./src/main/java/positionalIndex";
-	    String indexPath = "./src/main/java/index";
+	    String indexPath = "./src/main/java/positionalIndex";
 	    String query = "The ICC Cricket World Cup is the international championship of One Day International (ODI) cricket.";
-	    //String query = "cricket is a sport";
+	    //String query = "cricket";
 	    HashMap<String, ArrayList<String>> matches = null;
 	    //true if the locality sensitive hashing should be used false other wise
 	    boolean lsh = true;
@@ -124,7 +124,7 @@ public class PositionalSearcher {
 	    //QueryParser queryParser = new QueryParser(Version.LUCENE_7_2_0, .Term_Vector_Position, analyzer); 
 	    //ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("text", analyzer);
 	    //MultiPhraseQuery mpq = (MultiPhraseQuery) queryParser.parse("\"Testing\"");
-	    MultiPhraseQuery query;
+	    //MultiPhraseQuery query;
 	    /**Query query;
 	    Builder build = new BooleanQuery.Builder();
 	    BooleanClause clause = new BooleanClause(query, null);
@@ -132,7 +132,7 @@ public class PositionalSearcher {
 	    build.add(clause);*/
 	    
 	    
-	    MultiPhraseQuery.Builder pqbuild = new MultiPhraseQuery.Builder();
+	   /** MultiPhraseQuery.Builder pqbuild = new MultiPhraseQuery.Builder();
 	    pqbuild.setSlop(2);
 	    String [] words= LSH.convertStringToArrayOfWords(LSH.removePunctuationAndStopWords(queryString));
 	    Term [] terms = new Term[words.length];
@@ -145,9 +145,9 @@ public class PositionalSearcher {
 	    	pqbuild.add(terms[i]);
 	    }
 	    pqbuild.setSlop(10);
-	    query = (MultiPhraseQuery) pqbuild.build();
+	    query = (MultiPhraseQuery) pqbuild.build();*/
 	    
-	    //Query query = queryParser.parse(QueryParser.escape(queryString));
+	    Query query = queryParser.parse(QueryParser.escape(queryString));
 	    //MultiPhraseQuery mpq;
 	    //String escString = LSH.removePunctuationAndStopWords(queryString);
 	    //System.out.println("ESC STRING : " + escString);

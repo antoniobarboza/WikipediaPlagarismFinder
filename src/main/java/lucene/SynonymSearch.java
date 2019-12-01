@@ -53,6 +53,7 @@ public class SynonymSearch {
   public static void main(String[] args) throws Exception {
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
+    String qrelPath = "./src/main/java/QRELFiles";
     
     SynonymFinder synFind = new SynonymFinder();
     wordMap = new  HashMap<String, HashSet<String>>();
