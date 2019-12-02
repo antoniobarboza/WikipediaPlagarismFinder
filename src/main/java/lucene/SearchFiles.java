@@ -31,6 +31,8 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Terms;
+import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -39,6 +41,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import com.sun.tools.javac.util.Pair;
 
@@ -63,6 +66,7 @@ public class SearchFiles {
     if(lsh) {
     	Directory dir = FSDirectory.open(Paths.get(indexPath));
     	IndexReader reader = DirectoryReader.open(dir);
+        
     	//Create the minHashes to be used
     	MinHash [] hashes = new MinHash[10];
     	for(int i = 0; i < hashes.length; i++) {
@@ -123,6 +127,27 @@ public class SearchFiles {
   private static void runSearch(String queryString, String indexPath, HashMap<String, ArrayList<String>> matches, boolean lsh) throws Exception {
 	    Directory dir = FSDirectory.open(Paths.get(indexPath));
 	    IndexReader reader = DirectoryReader.open(dir);
+	    
+	  //track unique terms to enable our custom similarites
+    	int termCount = 0;
+        HashSet<String> uniqueTerms = new HashSet<String>();
+        for (int i=0; i<reader.maxDoc(); i++) {
+            //Document doc = reader.document(i);
+            //String docID = doc.get("docId");
+            int docID = i;
+        	Terms terms = reader.getTermVector(docID, "text");
+        	if(terms == null) continue;
+        	TermsEnum termsIterator = terms.iterator();
+            BytesRef byteRef = null;
+            while ((byteRef = termsIterator.next()) != null) {
+                //add each term to the unique terms count
+            	//This will be used for the unigram LM and will be passed to our custom similarities
+                String term =byteRef.utf8ToString();
+                uniqueTerms.add(term);
+                termCount += termsIterator.totalTermFreq();
+            }
+        }
+        
 	    IndexSearcher searcher = new IndexSearcher(reader);
 	    searcher.setSimilarity(new BM25Similarity());
 	    
