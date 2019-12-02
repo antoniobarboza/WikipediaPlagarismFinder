@@ -44,7 +44,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
-import com.sun.tools.javac.util.Pair;
 
 /** Simple command-line based search demo. */
 public class SynonymSearch {
@@ -167,7 +166,6 @@ public class SynonymSearch {
                 termCount += termsIterator.totalTermFreq();
             }
         }
-        
 	    IndexSearcher searcher = new IndexSearcher(reader);
 	    searcher.setSimilarity(new BM25Similarity());
 	    

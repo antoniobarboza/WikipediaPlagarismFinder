@@ -43,7 +43,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
-import com.sun.tools.javac.util.Pair;
 
 /** Simple command-line based search demo. */
 public class SearchFiles {
