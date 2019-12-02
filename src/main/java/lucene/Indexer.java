@@ -135,7 +135,7 @@ public class Indexer {
           if ( counter %1000 == 0) { 
         	  System.out.println("The counter is: " + counter);
           }
-          if ( counter == 20000 ) break;
+          if ( counter == 1000000 ) break;
           //String queryId = page.getPageId().toString();
   	  	  //String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
