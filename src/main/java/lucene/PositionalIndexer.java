@@ -133,7 +133,8 @@ public class PositionalIndexer {
 		  if( wantedIds.isEmpty() ) {
 			  break;
 		  }
-		  
+		  if ( counter %1000 == 0) System.out.println("Documents processed: " + counter);
+    	  if(counter == 10000) break;
           //String queryId = page.getPageId().toString();
   	  	  //String queryString = page.getPageName().toString();
 		  //System.out.println("PARAGRAPH : " + paragraph.getTextOnly());
@@ -148,8 +149,7 @@ public class PositionalIndexer {
                   //break;
               }
         	  //if(counter == 10000) break;
-        	  if ( counter %1000 == 0) System.out.println("Documents processed: " + counter);
-        	  if(counter == 10000) break;
+        	  
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
