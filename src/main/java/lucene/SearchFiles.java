@@ -186,9 +186,10 @@ public class SearchFiles {
   private static double calculatePlagarismNaive( String queryString, String content ) {
 	  //This function is going to look at he input string of the program and determine how much of it copied
 	  //The group words variable will be used to group the total words that are used in the contains. 
-	  queryString = queryString.toLowerCase();
+	  queryString = queryString.toLowerCase().trim();
 	  content = content.toLowerCase();
 	  content = content.replaceAll("['\"]", "");
+	  content = content.replaceAll("\\. ", "\\.  " );
 	  
 	  int totalsent = 0;
 	  int sentinceMatches = 0;
