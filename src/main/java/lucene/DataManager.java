@@ -261,9 +261,6 @@ public class DataManager {
 	   //enwiki:Flipper%20(cricket)
 	   String s16 = "The flipper is the name of a particular bowling delivery used in cricket, generally by a leg spin bowler. In essence it is a back spin ball. Squeezed out of the front of the hand with the thumb and first and second fingers, it keeps deceptively low after pitching and can accordingly be very difficult to play. The flipper is comparable to a riseball in fast-pitch softball.  By putting backspin on the ball the Magnus effect results in air travelling over the top of the ball quickly and cleanly whilst air travelling under the ball is turbulent. The lift produced means that the ball drops slower and travels further than a normal delivery. The slower descent also results in the ball bouncing lower. The flipper is bowled on the opposite side to a slider, much in the same way that the top-spinner is bowled. On release, the bowler 'pinches' or clicks the thumb and forefinger, causing the ball to come out underneath the hand. There must be sufficient tension in the wrist and fingers to impart a good helping of backspin or underspin. In doing so the flipper will float on towards the batsman and land on a fuller length than he anticipated, often leaving him caught on the back foot when he wrongly assumes it to be a pullable or a cuttable ball. The back spin or underspin will cause the ball to hurry on at great pace with very little bounce, though this may be harder to achieve on softer wickets. A series of normal leg spinners or topspinners, with their dropping looping flight, will have the batsman used to the ball pitching on a shorter length. The batsman may wrongly assume that the flipper will drop and loop like a normal overspinning delivery, resulting in the ball pitching under the bat and going on to either hit the stumps or result in leg before wicket. Much of the effectiveness of the flipper is attributable to the \"pop\", that is, the extra pace and change in trajectory that is imparted to the ball when it is squeezed out of the bowler's hand. Occasionally, the term 'flipper' has been used to describe other types of deliveries. The Australian leg spinner Bob Holland employed a back spinning ball that he simply pushed backwards with the heel of his palm. Sometimes this form of front-hand flipper is called a \"zooter\". It is easier to bowl but not as effective as the amount of backspin is much less.";
 	   q.add(s16);
-	   //enwiki:Hansie%20Cronje
-	   String s17 = "Wessel Johannes \"Hansie\" Cronje (25 September 1969 – 1 June 2002) was a South African cricketer and captain of the South African national cricket team in the 1990s. He died in a plane crash in 2002. He was voted the 11th greatest South African in 2004 despite having been banned from cricket for life due to his role in a match-fixing scandal.";
-	   q.add(s17);
 	   /**
 	   //enwiki:Category:Short%20form%20cricket
 	   String s18 = "This category is designed to hold all variations on the traditional forms of cricket and so includes such diverse alternatives as beach cricket, cricket card or computer games, French cricket, street cricket, etc.Category:Forms of cricket";
@@ -294,7 +291,11 @@ public class DataManager {
    }
    
    public static String convertToId(String docText) {
-		  return docText.replaceAll("\\s","%20");
+		  return docText.replaceAll("\\s","%20%");
 	  }
+   
+   public static String deconvertFromId(String  docText) {
+	   return docText.replaceAll("%20%"," ");
+   }
    
 }
