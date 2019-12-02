@@ -49,8 +49,8 @@ import org.apache.lucene.store.FSDirectory;
 public class WriteRelevantDocQRELS {
 	
   private WriteRelevantDocQRELS() {}
-  private static HashSet<String> stopWordMap;
-  private static HashMap<String, HashSet<String>> wordMap;
+  private static HashSet<String> stopWordMap = DataManager.getStopWordsFromFile("./src/main/java/data/stopWords.txt");
+  //private static HashMap<String, HashSet<String>> wordMap;
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
@@ -63,18 +63,17 @@ public class WriteRelevantDocQRELS {
 	qrel.createNewFile();
 	BufferedWriter writer = new BufferedWriter(new FileWriter(qrelPath));
     
-    wordMap = new  HashMap<String, HashSet<String>>();
+    //wordMap = new  HashMap<String, HashSet<String>>();
     
     //synFind.findSyn("a");
     //Here I am going to build the hashSet of StopWords 
-    stopWordMap = DataManager.getStopWordsFromFile("./src/main/java/data/stopWords.txt");
+    //stopWordMap = DataManager.getStopWordsFromFile("./src/main/java/data/stopWords.txt");
     
     System.out.println("Writing files with over 50% plagiarism scores for 25 queries...");
     ArrayList<String> queries = DataManager.get25Queries();
     //System.out.println("NUM QUERIES: " + queries.size());
     try {
     	for(String query: queries) {
-    		query = query.replaceAll("\\. ", "\\.  " );
     		runSearch(query, indexPath, writer);
     	}
     	//System.out.println("\nThe Plagarism Score calculated on a sentince by sentince basis with Syn Query Expansion = " + df.format(max.fst*100) + "% From Document: " + max.snd);
@@ -98,6 +97,10 @@ public class WriteRelevantDocQRELS {
 	    //Query query = queryParser.parse(QueryParser.escape(queryString));
 	    Query query = queryParser.parse(QueryParser.escape(queryString));
 	    
+	    queryString = queryString.replaceAll("\\. ", "\\.  " );
+		queryString = queryString.replaceAll("[\'\"]", "");
+		//queryString = queryString.replaceAll("[-]", " ");
+	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
 	    TopDocs searchResult = searcher.search(query,20);
@@ -113,23 +116,32 @@ public class WriteRelevantDocQRELS {
 	    	//System.out.println("Results for query: " + queryString);
 	    }
 	    //Instead of just displaying the contents.. I need to see how much of the input String is copied.
-	    System.out.println("hit length: " + hits.length);
+	    //System.out.println("hit length: " + hits.length);
+	    //int count = 0;
 	    for (int j=0; j < hits.length; j++ ) {
 	    	Document document = searcher.doc(hits[j].doc);
 	    	String id = document.get("id");
 	    	String text = document.get("text").toString();
 	    	//System.out.println("Page ID: " + id + ":\nContents: " + text);
-	    	if(calculatePlagiarismNaive(queryString, text) >= .5) writer.write(DataManager.convertToId(query.toString()) + " 0 " + id + " 1\n");
+	    	double score = calculatePlagiarismNaive(queryString, text);
+	    	if(score > 0.6 && score < 1) {
+	    		System.out.println(queryString);
+	    		//System.out.println("SCORE: " + score);
+	    	}
+	    	//if(score == 1) count++;
+	    	if(score > .5) writer.write(DataManager.convertToId(query.toString()) + " 0 " + id + " 1\n");
 	    	//calculatePlagarism( queryString, text );
 	    }
+	    //System.out.println("number of ones: " + count);
 
   }
   
   
   private static double calculatePlagiarismNaive( String queryString, String content ) {
-	  queryString = queryString.toLowerCase();
+	  queryString = queryString.toLowerCase().trim();
 	  content = content.toLowerCase();
 	  content = content.replaceAll("['\"]", "");
+	  content = content.replaceAll("\\. ", "\\.  " );
 	  
 	  int totalsent = 0;
 	  int sentinceMatches = 0;
@@ -148,6 +160,7 @@ public class WriteRelevantDocQRELS {
 		  }
 	  }
 	  double score = (double)sentinceMatches/(double)totalsent;
+	  //if(score != 1) System.out.println("CONTENT: " + content + "\nQuery  : " + queryString + " \n");
 	  //System.out.println( "Plagarism Naive percent score: " + score*100 + "%");
 	  return score;
   }
