@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+Se * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -54,6 +54,7 @@ public class SynonymSearch {
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
+    long startTime = System.currentTimeMillis();
 	boolean doubleSpace = true;
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
@@ -107,7 +108,12 @@ public class SynonymSearch {
     } catch(Exception e) {
     	System.out.println("Query failed! " + e.getMessage());
     }
+    long endTime = System.currentTimeMillis();
+    long elap = endTime - startTime;
     
+    //long secElap = TimeUnit.MILLISECONDS.toSeconds(elap);
+    
+    System.out.println("\n\nThe program took: " + elap +" milliseconds");
   }
   /**
    * This function is going to expand a given query
@@ -177,7 +183,7 @@ public class SynonymSearch {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
-	    TopDocs searchResult = searcher.search(query,10);
+	    TopDocs searchResult = searcher.search(query,1000);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
 	    //System.out.println("Results found: " + searchResult.totalHits);
@@ -230,9 +236,9 @@ public class SynonymSearch {
 	  for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
 		  totalsent++;
 		  String sent = source.substring(start,end);
-		  System.out.println(": " + sent);
+		  //System.out.println(": " + sent);
 		  if ( content.contains(sent.substring(0, sent.length()-1))) {
-			  System.out.println("MAtch");
+			  //System.out.println("MAtch");
 			  sentinceMatches++;
 		  }
 	  }
@@ -251,7 +257,7 @@ public class SynonymSearch {
 		  if ( content.contains(word)) {
 			  wordMatches += 1;
 			  if( lastHit ) {
-				  System.out.println("Consecutive");
+				  //System.out.println("Consecutive");
 				  wordMatches = wordMatches * 1.01; //Give a boost for a consecutive match;
 			  }
 			  lastHit = true;

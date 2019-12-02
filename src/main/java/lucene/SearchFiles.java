@@ -51,6 +51,8 @@ public class SearchFiles {
 
   /** Simple command-line based search demo. */
   public static void main(String[] args) throws Exception {
+	long startTime = System.currentTimeMillis();
+	
 	boolean doubleSpace = true;
     //This is a directory to the index
     String indexPath = "./src/main/java/index";
@@ -120,7 +122,12 @@ public class SearchFiles {
     } catch(Exception e) {
     	System.out.println("Query failed! " + e.getMessage());
     }
+    long endTime = System.currentTimeMillis();
+    long elap = endTime - startTime;
     
+    //long secElap = TimeUnit.MILLISECONDS.toSeconds(elap);
+    
+    System.out.println("\n\nThe program took: " + elap +" milliseconds");
   }
   
   private static void runSearch(String queryString, String indexPath, HashMap<String, ArrayList<String>> matches, boolean lsh) throws Exception {
@@ -158,7 +165,7 @@ public class SearchFiles {
 	    
 	    //This initiates the search and returns top 10
 	    //System.out.println("STARTING RETREVAl: " + query.toString());
-	    TopDocs searchResult = searcher.search(query,1);
+	    TopDocs searchResult = searcher.search(query,1000);
 	    ScoreDoc[] hits = searchResult.scoreDocs;
 	    
 	    //System.out.println("Results found: " + searchResult.totalHits);
@@ -221,13 +228,13 @@ public class SearchFiles {
 	  String source = queryString;
 	  iterator.setText(source);
 	  int start = iterator.first();
-	  System.out.println("Content \n" + content);
+	  //System.out.println("Content \n" + content);
 	  for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
 		  totalsent++;
 		  String sent = source.substring(start,end);
-		  System.out.println(": " + sent);
+		  //System.out.println(": " + sent);
 		  if ( content.contains(sent.substring(0, sent.length()-1))) {
-			  System.out.println("MAtch");
+			  //System.out.println("MAtch");
 			  sentinceMatches++;
 		  }
 	  }
