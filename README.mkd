@@ -24,8 +24,11 @@ INSTALLATION- Clone the repo - https://github.com/antoniobarboza/WikipediaPlagar
    java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.Indexer
    
 6. Application-
-
-
+   LSH-This takes in a String (document content) as an argument, if none given uses a default
+   java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.UseLSHOnPosIndex
+   
+   SEARCH FILES-to run with LSH need to edit boolean on line 63 (lsh) to true, this also takes a String(document content) as args
+   java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.SearchFiles
    
    
 
