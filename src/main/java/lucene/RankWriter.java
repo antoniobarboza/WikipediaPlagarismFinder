@@ -29,8 +29,6 @@ import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import com.sun.tools.javac.util.Pair;
-
 public class RankWriter {
 	
 	  private RankWriter() {}
