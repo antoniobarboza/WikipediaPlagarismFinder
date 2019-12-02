@@ -5,6 +5,7 @@ import java.util.HashSet;
 /**
  * This class creates a MinHash function
  * Each instance will have different values of a and b
+ * hash function is taken from: https://mccormickml.com/2015/06/12/minhash-tutorial-with-python-code/
  * 
  * a and b are randomly chosen integers less than max value of x, c is a prime number slightly larger than x
  * template: f(x) = (ax + b) % c

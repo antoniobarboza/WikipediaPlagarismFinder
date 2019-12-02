@@ -32,6 +32,8 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Terms;
+import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -40,7 +42,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import com.sun.tools.javac.util.Pair;
+import org.apache.lucene.util.BytesRef;
+
 
 /** Simple command-line based search demo. */
 public class SynonymSearch {
@@ -149,6 +152,26 @@ public class SynonymSearch {
   private static Pair<Double, String> runSearch(String queryString, String indexPath) throws Exception {
 	    Directory dir = FSDirectory.open(Paths.get(indexPath));
 	    IndexReader reader = DirectoryReader.open(dir);
+	    
+	  //track unique terms to enable our custom similarites
+    	int termCount = 0;
+        HashSet<String> uniqueTerms = new HashSet<String>();
+        for (int i=0; i<reader.maxDoc(); i++) {
+            //Document doc = reader.document(i);
+            //String docID = doc.get("docId");
+            int docID = i;
+        	Terms terms = reader.getTermVector(docID, "text");
+        	if(terms == null) continue;
+        	TermsEnum termsIterator = terms.iterator();
+            BytesRef byteRef = null;
+            while ((byteRef = termsIterator.next()) != null) {
+                //add each term to the unique terms count
+            	//This will be used for the unigram LM and will be passed to our custom similarities
+                String term =byteRef.utf8ToString();
+                uniqueTerms.add(term);
+                termCount += termsIterator.totalTermFreq();
+            }
+        }
 	    IndexSearcher searcher = new IndexSearcher(reader);
 	    searcher.setSimilarity(new BM25Similarity());
 	    
@@ -198,9 +221,10 @@ public class SynonymSearch {
   private static double calculatePlagarismNaive( String queryString, String content ) {
 	  //This function is going to look at he input string of the program and determine how much of it copied
 	  //The group words variable will be used to group the total words that are used in the contains. 
-	  queryString = queryString.toLowerCase();
+	  queryString = queryString.toLowerCase().trim();
 	  content = content.toLowerCase();
 	  content = content.replaceAll("['\"]", "");
+	  content = content.replaceAll("\\. ", "\\.  " );
 	  
 	  int totalsent = 0;
 	  int sentinceMatches = 0;

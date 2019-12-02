@@ -266,28 +266,28 @@ public class DataManager {
 	   q.add(s17);
 	   //enwiki:Category:Short%20form%20cricket
 	   String s18 = "This category is designed to hold all variations on the traditional forms of cricket and so includes such diverse alternatives as beach cricket, cricket card or computer games, French cricket, street cricket, etc.Category:Forms of cricket";
-	   q.add(s18);
+	   //q.add(s18);
 	   //enwiki:Mozambique%20national%20cricket%20team
 	   String s19 = "The Mozambique national cricket team is the team that represents the country of Mozambique in international cricket matches. The Mozambique national cricket team, which is administrated by the Mozambican Cricket Association, is an affiliate member of the International Cricket Council (ICC). Mozambique is also a member of the African Cricket Association. The Mozambique national cricket team has competed in the World Cricket League Africa Region and the ICC Africa Twenty20 Championship.";
-	   q.add(s19);
+	   //.add(s19);
 	   //enwiki:Japan%20Cricket%20Association
 	   String s20 = "Japan Cricket Association, a Japanese Non-Profit Organization, is the governing body for cricket in Japan. It was originally formed in 1984 and registered as NPO in 2001.Japan Cricket Association operates the Japanese cricket team and organises domestic cricket in Japan. Japan Cricket Association has been an Associate Member of International Cricket Council since 2005, belonging to the East-Asia Pacific region, under the International Cricket Council's development program. The Headquarter of the Japan Cricket Association are in Minato-ku, Tokyo, JAPAN.";
-	   q.add(s20);
+	   //q.add(s20);
 	   //enwiki:Cricket%20Scotland
 	   String s21 = "Cricket Scotland, formerly known as the Scottish Cricket Union, is the governing body of the sport of cricket in Scotland. The body is based at the National Cricket Academy, Edinburgh.The SCU was formed in 1908, but underwent a major restructuring in 2001 including a name change. It became an International Cricket Council member in 1994 as an Associate nation. It has three sub-associations: East of Scotland Cricket Association, Western District Cricket Union and the Aberdeenshire Cricket Association.";
-	   q.add(s21);
+	   //q.add(s21);
 	   //enwiki:CricketArchive
 	   String s22 = "CricketArchive is a cricket database website that aims to provide a complete archive of records relating to the sport of cricket. It claims to be the most comprehensive cricket database on the internet, including scorecards for all matches of first-class cricket (including Test cricket), List A cricket (including One Day Internationals), Women's Test cricket and Women's One-day Internationals, ICC Trophy, and international Under-19 cricket \"Test\" and one-day cricket matches also blind cricket matches.It is working on completing its coverage of English Second XI and other matches, including extensive coverage of UK club cricket.In 2017, the owners of the service decided to introduce paid access to the website.";
-	   q.add(s22);
+	   //q.add(s22);
 	   //enwiki:Wales%20national%20cricket%20team
 	   String s23 = "The Welsh cricket team () is the representative cricket team for Wales. Despite Wales and England being represented in Test Cricket by the England team, the Welsh cricket team continues to play short form cricket periodically.";
-	   q.add(s23);
+	   //q.add(s23);
 	   //enwiki:Cricket%20nets
 	   String s24 = "A cricket net is a practice net used by batsmen and bowlers to warm up and/or improve their cricketing techniques.  Cricket nets consist of a cricket pitch (natural or artificial) which is enclosed by cricket nets on either side, to the rear and optionally the roof.  The bowling end of the net is left open.  Cricket nets are the cricket equivalent of baseball's batting cages, though fundamentally different, as baseball cages provide complete ball containment, whereas cricket nets do not.";
-	   q.add(s24);
+	   //q.add(s24);
 	   //enwiki:Adam%20Dale
 	   String s25 = "Adam Craig Dale (born 30 December 1968, in Ivanhoe, Victoria) is a former Australian cricketer who played in 2 Tests and 30 ODIs from 1997 to 2000. He played in first-class and List A cricket for Queensland Bulls and in club cricket for North Melbourne Cricket Club, Heidelberg Cricket Club, Northcote Cricket Club, Old Paradians Cricket Club and Research Cricket Club.From a short, ambling run-up, Dale delivered medium-paced outswingers with nagging accuracy. He therefore become known more as an economical bowler in one-day cricket, although he was selected for two Tests throughout his career and was very successful for Queensland in the first-class arena. He is best remembered however for taking one of the greatest catches ever seen in the game of cricket whilst playing for Queensland in the summer of 1997/98.He played grade cricket for the Wynnum-Manly Cricket Club in Brisbane, and premier cricket for Northcote, Heidelberg Cricket Club, North Melbourne and Melbourne in Melbourne, over a long career which spanned twenty-six years from 1985/86 to 2010/11.";
-	   q.add(s25);
+	   //q.add(s25);
 	   return q;
    }
    

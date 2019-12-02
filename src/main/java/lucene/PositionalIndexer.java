@@ -70,7 +70,7 @@ public class PositionalIndexer {
   /** Index all text files under a directory. */
   public static void main(String[] args) {
     String indexPath = "./src/main/java/positionalIndex";
-    String docsPath = "./src/main/java/data/all-enwiki-20170820.cbor";
+    String docsPath = "./src/main/java/data/all-enwiki-20170820/all-enwiki-20170820.cbor";
     
     File input = new File(docsPath);
     
@@ -145,9 +145,11 @@ public class PositionalIndexer {
         	  if (commit == 10000) {
                   writer.commit();
                   commit = 0;
-                  break;
+                  //break;
               }
-        	  if(counter == 10000) break;
+        	  //if(counter == 10000) break;
+        	  if ( counter %1000 == 0) System.out.println("Documents processed: " + counter);
+        	  if(counter == 50000) break;
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
