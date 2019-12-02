@@ -128,7 +128,7 @@ public class WriteRelevantDocQRELS {
 	    		System.out.println(queryString);
 	    		//System.out.println("SCORE: " + score);
 	    	}
-	    	//if(score == 1) count++;
+	    	//if(score == 1) System.out.println("ID: " + id);
 	    	if(score > .5) writer.write(DataManager.convertToId(query.toString()) + " 0 " + id + " 1\n");
 	    	//calculatePlagarism( queryString, text );
 	    }

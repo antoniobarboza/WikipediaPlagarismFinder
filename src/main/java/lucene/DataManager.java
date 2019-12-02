@@ -264,6 +264,7 @@ public class DataManager {
 	   //enwiki:Hansie%20Cronje
 	   String s17 = "Wessel Johannes \"Hansie\" Cronje (25 September 1969 – 1 June 2002) was a South African cricketer and captain of the South African national cricket team in the 1990s. He died in a plane crash in 2002. He was voted the 11th greatest South African in 2004 despite having been banned from cricket for life due to his role in a match-fixing scandal.";
 	   q.add(s17);
+	   /**
 	   //enwiki:Category:Short%20form%20cricket
 	   String s18 = "This category is designed to hold all variations on the traditional forms of cricket and so includes such diverse alternatives as beach cricket, cricket card or computer games, French cricket, street cricket, etc.Category:Forms of cricket";
 	   //q.add(s18);
@@ -288,6 +289,7 @@ public class DataManager {
 	   //enwiki:Adam%20Dale
 	   String s25 = "Adam Craig Dale (born 30 December 1968, in Ivanhoe, Victoria) is a former Australian cricketer who played in 2 Tests and 30 ODIs from 1997 to 2000. He played in first-class and List A cricket for Queensland Bulls and in club cricket for North Melbourne Cricket Club, Heidelberg Cricket Club, Northcote Cricket Club, Old Paradians Cricket Club and Research Cricket Club.From a short, ambling run-up, Dale delivered medium-paced outswingers with nagging accuracy. He therefore become known more as an economical bowler in one-day cricket, although he was selected for two Tests throughout his career and was very successful for Queensland in the first-class arena. He is best remembered however for taking one of the greatest catches ever seen in the game of cricket whilst playing for Queensland in the summer of 1997/98.He played grade cricket for the Wynnum-Manly Cricket Club in Brisbane, and premier cricket for Northcote, Heidelberg Cricket Club, North Melbourne and Melbourne in Melbourne, over a long career which spanned twenty-six years from 1985/86 to 2010/11.";
 	   //q.add(s25);
+	    */
 	   return q;
    }
    

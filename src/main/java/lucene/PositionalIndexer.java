@@ -149,7 +149,7 @@ public class PositionalIndexer {
               }
         	  //if(counter == 10000) break;
         	  if ( counter %1000 == 0) System.out.println("Documents processed: " + counter);
-        	  if(counter == 50000) break;
+        	  if(counter == 10000) break;
         	Document doc = new Document();
 		  	doc.add(new StringField("id", page.getPageId().toString(), Field.Store.YES));
 		  	//doc.add(new TextField("text", page.getPageName().toString(), Field.Store.YES)); 
