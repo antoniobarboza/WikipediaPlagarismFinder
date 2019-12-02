@@ -27,12 +27,12 @@ NOTE!************************************** This only needs to be done manualy i
 6. Application-
    The application has two main driver functions: 
    
-   SEARCHFILES - searchfile.java ( no query expansion )
+   SEARCHFILES - searchfile.java ( no query expansion ) -> Some example queries you can use are below
    java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.SearchFiles
    ~This file takes a string at the command line that is the query you are checking for plagarism. (can be a personal paper or     another wikipedia doc!)
    ~ To run with LSH need to edit boolean on line 63 (lsh) to true
    
-   SYNOMYMSEARCHER - performs query expansion and calculates plagarism 
+   SYNOMYMSEARCHER - performs query expansion and calculates plagarism -> Some example queries you can use are below
    java -Xmx50g -cp target/IR_program1-0.1-jar-with-dependencies.jar lucene.SynonymSearch
    ~This file takes a string at the command line that is the query you are checking for plagarism. (can be a personal paper or     another wikipedia doc!)
    
