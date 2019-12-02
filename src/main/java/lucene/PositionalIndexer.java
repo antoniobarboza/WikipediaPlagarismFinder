@@ -69,7 +69,7 @@ public class PositionalIndexer {
 
   /** Index all text files under a directory. */
   public static void main(String[] args) {
-    String indexPath = "./src/main/java/positionalIndex";
+    String indexPath = "./src/main/java/index";
     String docsPath = "./src/main/java/data/all-enwiki-20170820/all-enwiki-20170820.cbor";
     
     File input = new File(docsPath);
