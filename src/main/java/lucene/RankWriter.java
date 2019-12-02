@@ -25,10 +25,9 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-
-import com.sun.tools.javac.util.Pair;
 
 public class RankWriter {
 	
@@ -79,7 +78,7 @@ public class RankWriter {
 
 	    queries = DataManager.get25Queries();
 	    System.out.println("number of queries: " + queries.size());
-	    BufferedWriter writer = new BufferedWriter(new FileWriter("./src/main/java/output/bm25RunFile.txt"));
+	    BufferedWriter writer = new BufferedWriter(new FileWriter("./src/main/java/analysis/rankings.qrels"));
 	    try {
 	    	for(int i = 0;i < queries.size(); i++) {
 	    		runSearch(queries.get(i), indexPath, matches, lsh, writer);
@@ -96,8 +95,10 @@ public class RankWriter {
 		  Directory dir = FSDirectory.open(Paths.get(indexPath));
 		    IndexReader reader = DirectoryReader.open(dir);
 		    IndexSearcher searcher = new IndexSearcher(reader);
-		    searcher.setSimilarity(new BM25Similarity());
+		    //Similarity simul = CustomSimilarity.getSimilarity("UL", (double) uniqueTerms.size(), (double) termCount );
 		    
+		    //searcher.setSimilarity(new ClassicSimilarity());
+		    searcher.setSimilarity(new BM25Similarity());
 		    //This sets up the query
 		    Analyzer analyzer = new StandardAnalyzer();
 		    QueryParser queryParser = new QueryParser("text", analyzer);
@@ -149,10 +150,23 @@ public class RankWriter {
 		    
 		    int j =0;
 		    String qId = DataManager.convertToId(queryString);
+		    /**
 		    for ( Pair<Double, String> score : Pscores ) {
-		    	writer.write( qId + " Q0 " + score.snd + " " + j + " " + score.fst + " Team11-Bm25_Simularity\n" );
+		    	writer.write( qId + " Q0 " + score.snd + " " + j + " " + score.fst + " Team11-BM25_Simularity\n" );
 		    	j++;
 		    }
+		    */
+		    //qrel file production below 
+		    
+		    for ( Pair<Double, String> score : Pscores ) {
+	    		int rel = 0;
+		    	if ( score.fst > 0.1 ) {
+		    		rel = 1;
+		    		writer.write( qId + " 0 " + score.snd + " " + rel +"\n" );
+		    	}
+		    	j++;
+		    }
+		    
 		    
 	  }
 	  private static double calculatePlagarismNaive( String queryString, String content ) {
