@@ -103,7 +103,7 @@ public class SynonymSearch {
     		}
     	}
     	DecimalFormat df = new DecimalFormat("0.00");
-    	System.out.println("\nThe Plagarism Score calculated on a sentince by sentince basis with Syn Query Expansion = " + df.format(max.fst*100) + "% From Document: " + max.snd);
+    	System.out.println("\nThe Plagarism Score calculated on a sentence by sentence basis with Syn Query Expansion = " + df.format(max.fst*100) + "% From Document: " + max.snd);
  
     } catch(Exception e) {
     	System.out.println("Query failed! " + e.getMessage());
